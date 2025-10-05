@@ -5,7 +5,7 @@ public class Client {
     private String firstName;
     private String lastName;
     private String phoneNumeber;
-    private Client clientType;
+    private ClientType clientType;
 
     public String getPersonalId() {
         return personalId;
@@ -39,11 +39,11 @@ public class Client {
         this.phoneNumeber = phoneNumeber;
     }
 
-    public Client getClientType() {
+    public ClientType getClientType() {
         return clientType;
     }
 
-    public void setClientType(Client clientType) {
+    public void setClientType(ClientType clientType) {
         this.clientType = clientType;
     }
 }

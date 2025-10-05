@@ -1,4 +1,5 @@
 package org.nbd;
 
-public class ClientType {
+public interface ClientType {
+    public double getDiscount();
 }

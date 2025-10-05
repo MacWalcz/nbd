@@ -1,4 +1,8 @@
 package org.nbd;
 
-public class Default extends ClientType {
+public class Default implements ClientType {
+    @Override
+    public double getDiscount() {
+        return 1;
+    }
 }
