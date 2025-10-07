@@ -2,7 +2,6 @@ package org.nbd;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,4 +24,7 @@ public class RentTest {
         double cost = rent.getCost();
         assertTrue(cost == 600.0);
     }
+
 }
+
+
