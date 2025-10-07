@@ -46,4 +46,12 @@ public class Client {
     public void setClientType(ClientType clientType) {
         this.clientType = clientType;
     }
+
+    public Client(String personalId, String firstName, String lastName, String phoneNumeber, ClientType clientType) {
+        this.personalId = personalId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumeber = phoneNumeber;
+        this.clientType = clientType;
+    }
 }

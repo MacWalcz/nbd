@@ -30,6 +30,11 @@ public class House {
         this.area = area;
     }
 
+    public House(String houseNumber, double price, double area) {
+        this.houseNumber = houseNumber;
+        this.price = price;
+        this.area = area;
+    }
 }
 
 
