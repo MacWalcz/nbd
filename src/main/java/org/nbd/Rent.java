@@ -1,13 +1,38 @@
 package org.nbd;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-public class Rent {
+@Access(AccessType.FIELD)
+@Entity
+@Table(name = "RENTS")
+public class Rent extends AbstractEntity {
+
+    @Id
+    @Column(name = "ID")
+    @SequenceGenerator(initialValue = 1, name = "rentIdSequence")
+    @GeneratedValue(generator = "rentIdSequence")
+    private long id;
+
+
     private LocalDate startDate;
+
+
     private LocalDate endDate;
+
+    @ManyToOne
+    @JoinColumn(name = "CLIENT_ID")
+    @NotNull
     private Client client;
+
+    @ManyToOne
+    @JoinColumn(name = "HOUSE_ID")
+    @NotNull
     private House house;
+
     private double cost;
 
     public LocalDate getStartDate() {
@@ -48,6 +73,18 @@ public class Rent {
 
     public void setCost(double cost) {
         this.cost = cost;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Rent(){
+
     }
 
     public Rent(LocalDate startDate, LocalDate endDate, Client client, House house) {

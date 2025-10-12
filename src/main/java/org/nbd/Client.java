@@ -1,19 +1,31 @@
 package org.nbd;
 
-public class Client {
-    private String personalId;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+
+
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "CLIENTS")
+@Access(AccessType.FIELD)
+public class Client extends AbstractEntity {
+    @Id
+    @Column(name = "ID")
+    @SequenceGenerator(initialValue = 1, name = "clientIdSequence")
+    @GeneratedValue(generator = "clientIdSequence")
+    private long id;
+
+    @Column(name = "firstname")
     private String firstName;
+    @Column(name = "lastname")
     private String lastName;
-    private String phoneNumeber;
+    @Column(name = "phonenumber")
+    private String phoneNumber;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @NotNull
+    @JoinColumn(name = "CLIENTTYPE_ID")
     private ClientType clientType;
-
-    public String getPersonalId() {
-        return personalId;
-    }
-
-    public void setPersonalId(String personalId) {
-        this.personalId = personalId;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -31,12 +43,12 @@ public class Client {
         this.lastName = lastName;
     }
 
-    public String getPhoneNumeber() {
-        return phoneNumeber;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setPhoneNumeber(String phoneNumeber) {
-        this.phoneNumeber = phoneNumeber;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public ClientType getClientType() {
@@ -47,11 +59,22 @@ public class Client {
         this.clientType = clientType;
     }
 
-    public Client(String personalId, String firstName, String lastName, String phoneNumeber, ClientType clientType) {
-        this.personalId = personalId;
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Client(){
+
+    }
+
+    public Client(String firstName, String lastName, String phoneNumber, ClientType clientType) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.phoneNumeber = phoneNumeber;
+        this.phoneNumber = phoneNumber;
         this.clientType = clientType;
     }
 }

@@ -8,13 +8,16 @@
     <class>org.nbd.Client</class>
     <class>org.nbd.House</class>
     <class>org.nbd.Rent</class>
+    <class>org.nbd.ClientType</class>
+    <class>org.nbd.Default</class>
+    <class>org.nbd.Premium</class>
+    <class>org.nbd.Luxury</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <shared-cache-mode>NONE</shared-cache-mode>
     <validation-mode>CALLBACK</validation-mode>
     <properties>
       <property name="jakarta.persistence.jdbc.driver" value="org.testcontainers.jdbc.ContainerDatabaseDriver"/>
-      <property name="jakarta.persistence.jdbc.url" value="jdbc:tc:postgresql:15:///nbddb"/>
-
+      <property name="jakarta.persistence.jdbc.url" value="jdbc:tc:postgresql:17:///nbddb?TC_REUSABLE=true"/>
       <property name="jakarta.persistence.jdbc.user" value="nbd"/>
       <property name="jakarta.persistence.jdbc.password" value="nbdpassword"/>
       <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
