@@ -22,7 +22,7 @@ public class Client extends AbstractEntity {
     @Column(name = "phonenumber")
     private String phoneNumber;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @NotNull
     @JoinColumn(name = "CLIENTTYPE_ID")
     private ClientType clientType;

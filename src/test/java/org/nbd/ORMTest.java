@@ -13,7 +13,7 @@ import java.time.LocalDate;
 
 
 
-public class RentTest {
+public class ORMTest {
 
     private Rent rent;
     private Client client;
@@ -49,13 +49,12 @@ public class RentTest {
 
     }
 
-
     @Test
     void testRent() {
-        assertTrue(rent.getClient().equals(client));
-        assertTrue(rent.getHouse().equals(house));
+        assertEquals(rent.getClient(), client);
+        assertEquals(rent.getHouse(), house);
         double cost = rent.getCost();
-        assertTrue(cost == 600.0);
+        assertEquals(600.0, cost);
     }
 
     @Test
@@ -67,10 +66,57 @@ public class RentTest {
         House found = em.find(House.class, house.getId());
 
         assertNotNull(found);
-        assertEquals(house.getPrice(), house.getPrice());
+        assertEquals(house.getPrice(), found.getPrice());
 
     }
 
+    @Test
+    void testDeleteClient(){
+        EntityTransaction transaction = em.getTransaction();
+
+        Client found = em.find(Client.class, 1);
+        assertEquals("Jan", found.getFirstName());
+
+        transaction.begin();
+        em.remove(found);
+        transaction.commit();
+
+        found = em.find(Client.class, 1);
+        assertNull(found);
+    }
+
+    @Test
+    void testUpdateClient(){
+        EntityTransaction transaction = em.getTransaction();
+
+        String newFirstName = "Mikita";
+        Client found = em.find(Client.class, 1);
+        String oldFirstName = found.getFirstName();
+
+        found.setFirstName(newFirstName);
+
+        transaction.begin();
+        em.merge(found);
+        transaction.commit();
+
+        found = em.find(Client.class, 1);
+        assertEquals(newFirstName, found.getFirstName());
+
+        found.setFirstName(oldFirstName);
+
+        transaction.begin();
+        em.merge(found);
+        transaction.commit();
+
+        found = em.find(Client.class, 1);
+        assertEquals(oldFirstName, found.getFirstName());
+    }
+
+    @Test
+    void testSelectClient(){
+        Client found = em.find(Client.class, 1);
+        assertEquals("Jan", found.getFirstName());
+    }
 }
 
 
