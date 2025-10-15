@@ -4,10 +4,10 @@ public interface RepoManager<T> {
 
     void create(T t);
 
-    T read();
+    T read(long id);
 
-    void update(T t);
+    void update(long id, T t);
 
-    void delete(T t);
+    void delete(long id);
 
 }
