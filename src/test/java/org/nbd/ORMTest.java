@@ -46,16 +46,27 @@ public class ORMTest {
         Rent rent2 = new Rent(LocalDate.of(2025,6,7), LocalDate.of(2025,6,8), client2, house2);
         Rent rent3 = new Rent(LocalDate.of(2025,6,9), LocalDate.of(2025,6,10), client3, house3);
 
+        House house4 = new House("1",200.0,30.0);
+
+        Client client4 = new Client("Kamil","Kowal","504420021",ct1);
+
+        Rent rent4 = new Rent(LocalDate.of(2025,10,10), LocalDate.of(2025,10,13), client4, house4);
+        Rent rent5 = new Rent(LocalDate.of(2025,10,14), LocalDate.of(2025,10,16), client2, house4);
+
         cl.create(ct1);
         c.create(client1);
         c.create(client2);
         c.create(client3);
+        c.create(client4);
         h.create(house1);
         h.create(house2);
         h.create(house3);
+        h.create(house4);
         r.create(rent1);
         r.create(rent2);
         r.create(rent3);
+        r.create(rent4);
+        r.create(rent5);
     }
 
 
@@ -70,9 +81,6 @@ public class ORMTest {
 
     @Test
     void testContainerCreate(){
-        //READ test
-
-        //CREATE test
         cl.create(clientType);
         c.create(client);
         h.create(house);
@@ -102,6 +110,7 @@ public class ORMTest {
         assertEquals(22, h.read(2).getPrice());
         assertEquals(23, h.read(2).getArea());
     }
+
     @Test
     void testContainerDelete(){
         r.delete(1);
@@ -117,5 +126,14 @@ public class ORMTest {
         assertEquals("Jan", c.read(1).getFirstName());
         assertEquals("9a", h.read(1).getHouseNumber());
         assertEquals(LocalDate.of(2025,6,6), r.read(1).getStartDate());
+    }
+
+    @Test
+    void testFailedUpdateRent(){
+        assertEquals(LocalDate.of(2025,10,10), r.read(4).getStartDate());
+        assertEquals(LocalDate.of(2025,10,14), r.read(5).getStartDate());
+        Rent rentUpdated = new Rent(LocalDate.of(2025,10,12), LocalDate.of(2025,10,15), c.read(4), h.read(4));
+        r.update(4, rentUpdated);
+        assertEquals(LocalDate.of(2025,10,10), r.read(4).getStartDate());
     }
 }
