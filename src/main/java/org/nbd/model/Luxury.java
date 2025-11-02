@@ -1,4 +1,4 @@
-package org.nbd;
+package org.nbd.model;
 
 public class Luxury implements ClientType{
     @Override
