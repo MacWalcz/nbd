@@ -21,8 +21,8 @@ import java.util.UUID;
 public class ClientController {
     private final @NonNull ClientService clientService;
 
-    @GetMapping("{/id}")
-    public ClientDTO getClient(@PathVariable UUID id) {
+    @GetMapping("/{id}")
+    public ClientDTO getClient(@PathVariable("id") UUID id) {
         return ClientConverter.clientToClientDTO(this.clientService.getClient(id));
     }
 
