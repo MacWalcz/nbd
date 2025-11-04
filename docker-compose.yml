@@ -1,0 +1,75 @@
+services:
+  mongodb1:
+    build: ./mongo
+    container_name: mongodb1
+    hostname: mongodb1
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo1_data:/data/db
+    command: --config /etc/mongod.conf --port 27017
+    healthcheck:
+      test: ["CMD", "mongosh", "--port", "27017", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongodb2:
+    build: ./mongo
+    container_name: mongodb2
+    hostname: mongodb2
+    ports:
+      - "27018:27018"
+    volumes:
+      - mongo2_data:/data/db
+    command: --config /etc/mongod.conf --port 27018
+    healthcheck:
+      test: ["CMD", "mongosh", "--port", "27018", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongodb3:
+    build: ./mongo
+    container_name: mongodb3
+    hostname: mongodb3
+    ports:
+      - "27019:27019"
+    volumes:
+      - mongo3_data:/data/db
+    command: --config /etc/mongod.conf --port 27019
+    healthcheck:
+      test: ["CMD", "mongosh", "--port", "27019", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongoinit:
+    image: mongo:8.0.1
+    container_name: mongoinit
+    depends_on:
+      mongodb1:
+        condition: service_healthy
+      mongodb2:
+        condition: service_healthy
+      mongodb3:
+        condition: service_healthy
+    entrypoint: >
+      bash -c "
+        sleep 10 &&
+        mongosh --host mongodb1:27017 --eval '
+          rs.initiate({
+            _id: \"replica_set_single\",
+            members: [
+              { _id: 0, host: \"mongodb1:27017\" },
+              { _id: 1, host: \"mongodb2:27018\" },
+              { _id: 2, host: \"mongodb3:27019\" }
+            ]
+          });
+        '
+      "
+
+volumes:
+  mongo1_data:
+  mongo2_data:
+  mongo3_data:
