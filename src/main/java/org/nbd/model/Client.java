@@ -1,17 +1,14 @@
 package org.nbd.model;
 
-
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
-import lombok.AllArgsConstructor;
-
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
+@Document(collection = "clients")
 public class Client extends User {
     private String firstName;
     private String lastName;
@@ -20,6 +17,4 @@ public class Client extends User {
 
     @Builder.Default
     private boolean active = false;
-
-
 }

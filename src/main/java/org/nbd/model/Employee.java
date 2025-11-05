@@ -1,4 +1,6 @@
 package org.nbd.model;
 
-public class Employee extends User {
- }
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "employees")
+public class Employee extends User { }

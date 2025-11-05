@@ -1,12 +1,13 @@
 package org.nbd.model;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @NoArgsConstructor
 @SuperBuilder
+@Document(collection = "houses")
 public class House extends AbstractEntity {
     private String houseNumber;
     private double price;
@@ -18,5 +19,3 @@ public class House extends AbstractEntity {
         this.area = area;
     }
 }
-
-

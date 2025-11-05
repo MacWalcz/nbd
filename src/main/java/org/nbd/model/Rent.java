@@ -1,8 +1,9 @@
 package org.nbd.model;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -10,13 +11,18 @@ import java.time.temporal.ChronoUnit;
 @Data
 @NoArgsConstructor
 @SuperBuilder
+@Document(collection = "rents")
 public class Rent extends AbstractEntity {
     private LocalDate startDate;
     private LocalDate endDate;
-    private Client client;
-    private House house;
-    private double cost;
 
+    @DBRef
+    private Client client;
+
+    @DBRef
+    private House house;
+
+    private double cost;
 
     public Rent(LocalDate startDate, LocalDate endDate, Client client, House house) {
         this.startDate = startDate;
