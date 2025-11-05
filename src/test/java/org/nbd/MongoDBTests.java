@@ -4,6 +4,7 @@ import org.junit.jupiter.api.*;
 import org.nbd.model.*;
 import org.nbd.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
@@ -14,7 +15,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@DataMongoTest
 @TestPropertySource(locations = "classpath:application-test.properties")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class RepositoryClusterIntegrationTest {
@@ -38,7 +39,6 @@ class RepositoryClusterIntegrationTest {
         rentRepository.deleteAll();
 
         testClient = Client.builder()
-                .id(UUID.randomUUID())
                 .login("karabeika")
                 .firstName("Mikita")
                 .lastName("Test")
@@ -47,8 +47,12 @@ class RepositoryClusterIntegrationTest {
                 .active(true)
                 .build();
 
-        testHouse = new House("H1", 200.0, 50.0);
-        testHouse.setId(UUID.randomUUID());
+        testHouse = House.builder()
+                .houseNumber("d67")
+                .area(30.0)
+                .price(200.0)
+                .build();
+
 
         clientRepository.save(testClient);
         houseRepository.save(testHouse);
@@ -57,9 +61,8 @@ class RepositoryClusterIntegrationTest {
     @Test
     @Order(1)
     void testClientCRUD() {
-        // CREATE
+
         Client client = Client.builder()
-                .id(UUID.randomUUID())
                 .login("user1")
                 .firstName("Jan")
                 .lastName("Kowalski")
@@ -69,60 +72,64 @@ class RepositoryClusterIntegrationTest {
 
         clientRepository.save(client);
 
-        // READ
-        Optional<Client> found = clientRepository.findById(client.getId().toString());
+
+        Optional<Client> found = clientRepository.findById(client.getId());
         assertThat(found).isPresent();
 
-        // UPDATE
+
         found.get().setLastName("Nowak");
         clientRepository.save(found.get());
-        Client updated = clientRepository.findById(client.getId().toString()).orElseThrow();
+        Client updated = clientRepository.findById(client.getId()).orElseThrow();
         assertThat(updated.getLastName()).isEqualTo("Nowak");
 
-        // DELETE
-        clientRepository.deleteById(client.getId().toString());
-        assertThat(clientRepository.findById(client.getId().toString())).isEmpty();
+
+        clientRepository.deleteById(client.getId());
+        assertThat(clientRepository.findById(client.getId())).isEmpty();
     }
 
     @Test
     @Order(2)
     void testHouseCRUD() {
-        House house = new House("H2", 300.0, 80.0);
-        house.setId(UUID.randomUUID());
+        House house = House.builder()
+                .houseNumber("H2")
+                .price(300.0)
+                .area(80.0)
+                .build();
+
+
         houseRepository.save(house);
 
-        House found = houseRepository.findById(house.getId().toString()).orElse(null);
+        House found = houseRepository.findById(house.getId()).orElse(null);
         assertThat(found).isNotNull();
 
         found.setPrice(350.0);
         houseRepository.save(found);
 
-        House updated = houseRepository.findById(house.getId().toString()).orElse(null);
+        House updated = houseRepository.findById(house.getId()).orElse(null);
         assertThat(updated.getPrice()).isEqualTo(350.0);
 
-        houseRepository.deleteById(house.getId().toString());
-        assertThat(houseRepository.findById(house.getId().toString())).isEmpty();
+        houseRepository.deleteById(house.getId());
+        assertThat(houseRepository.findById(house.getId())).isEmpty();
     }
 
     @Test
     @Order(3)
     void testRentCRUD() {
         Rent rent = new Rent(LocalDate.now(), LocalDate.now().plusDays(3), testClient, testHouse);
-        rent.setId(UUID.randomUUID());
-        rentRepository.save(rent);
+        rentRepository.saveRent(rent);
 
-        Rent found = rentRepository.findById(rent.getId().toString()).orElse(null);
+        Rent found = rentRepository.findById(rent.getId()).orElse(null);
         assertThat(found).isNotNull();
 
         found.setEndDate(LocalDate.now().plusDays(5));
-        rentRepository.save(found);
-        Rent updated = rentRepository.findById(rent.getId().toString()).orElse(null);
+        rentRepository.saveRent(found);
+        Rent updated = rentRepository.findById(rent.getId()).orElse(null);
         assertThat(updated.getEndDate()).isAfter(rent.getEndDate());
 
         List<Rent> all = rentRepository.findAll();
         assertThat(all).hasSize(1);
 
-        rentRepository.deleteById(rent.getId().toString());
+        rentRepository.deleteById(rent.getId());
         assertThat(rentRepository.findAll()).isEmpty();
     }
 

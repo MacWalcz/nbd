@@ -15,7 +15,6 @@ public class ClientService {
 
 
     public Client getClient(UUID id) {
-        System.out.println("dupa");
         return Client.builder()
                 .id(id)
                 .login("elo")
