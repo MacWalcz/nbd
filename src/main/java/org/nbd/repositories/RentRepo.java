@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface RentRepo extends MongoRepository<Rent, UUID> {
+public interface RentRepo extends MongoRepository<Rent, String> {
     @Transactional
     default Rent saveRent(Rent rent) {
         List<Rent> rents = findOverlappingReservations(rent.getHouse().getId(),rent.getStartDate(),rent.getEndDate());
@@ -25,6 +25,6 @@ public interface RentRepo extends MongoRepository<Rent, UUID> {
     @Query("{ 'id': ?0, '$or': [ " +
             "{ 'startDate': { '$lte': ?2 }, 'endDate': { '$gte': ?1 } }, " +
             "{ 'startDate': { '$gte': ?1, '$lte': ?2 } } ] }")
-    List<Rent> findOverlappingReservations(UUID id, LocalDate startDate, LocalDate endDate);
+    List<Rent> findOverlappingReservations(String id, LocalDate startDate, LocalDate endDate);
 
 }

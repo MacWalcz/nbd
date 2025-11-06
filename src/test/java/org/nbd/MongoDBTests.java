@@ -29,21 +29,28 @@ class RepositoryClusterIntegrationTest {
     @Autowired
     private RentRepo rentRepository;
 
+    @Autowired
+    private ClientTypeRepo clientTypeRepository;
+
     private Client testClient;
     private House testHouse;
+    private ClientType testClientType;
 
     @BeforeEach
     void setup() {
         clientRepository.deleteAll();
         houseRepository.deleteAll();
         rentRepository.deleteAll();
+        clientTypeRepository.deleteAll();
+
+        testClientType = new Default();
 
         testClient = Client.builder()
                 .login("karabeika")
                 .firstName("Mikita")
                 .lastName("Test")
                 .phoneNumeber("505050505")
-                .clientType(new Default())
+                .clientType(testClientType)
                 .active(true)
                 .build();
 
@@ -53,7 +60,7 @@ class RepositoryClusterIntegrationTest {
                 .price(200.0)
                 .build();
 
-
+        clientTypeRepository.save(testClientType);
         clientRepository.save(testClient);
         houseRepository.save(testHouse);
     }
@@ -67,7 +74,7 @@ class RepositoryClusterIntegrationTest {
                 .firstName("Jan")
                 .lastName("Kowalski")
                 .phoneNumeber("123456789")
-                .clientType(new Default())
+                .clientType(testClientType)
                 .build();
 
         clientRepository.save(client);

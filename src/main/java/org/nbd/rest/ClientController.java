@@ -22,7 +22,7 @@ public class ClientController {
     private final @NonNull ClientService clientService;
 
     @GetMapping("/{id}")
-    public ClientDTO getClient(@PathVariable("id") UUID id) {
+    public ClientDTO getClient(@PathVariable("id") String id) {
         return ClientConverter.clientToClientDTO(this.clientService.getClient(id));
     }
 

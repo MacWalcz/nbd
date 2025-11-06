@@ -14,7 +14,7 @@ import java.util.UUID;
 public class ClientService {
 
 
-    public Client getClient(UUID id) {
+    public Client getClient(String id) {
         return Client.builder()
                 .id(id)
                 .login("elo")

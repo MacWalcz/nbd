@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -17,7 +19,7 @@ import java.util.UUID;
 @SuperBuilder
 public abstract class AbstractEntity implements Serializable {
     @Id
-    private UUID id;
+    private String id;
 
     @Version
     private long version;

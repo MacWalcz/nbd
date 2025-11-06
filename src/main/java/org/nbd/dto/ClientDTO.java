@@ -4,9 +4,9 @@ import org.nbd.model.ClientType;
 
 import java.util.UUID;
 
-public record ClientDTO(UUID id, String login, String firstName, String lastName, String phoneNumber, ClientType clientType) {
+public record ClientDTO(String id, String login, String firstName, String lastName, String phoneNumber, ClientType clientType) {
 
-    public ClientDTO(UUID id, String login, String firstName, String lastName, String phoneNumber, ClientType clientType) {
+    public ClientDTO(String id, String login, String firstName, String lastName, String phoneNumber, ClientType clientType) {
         this.id = id;
         this.login = login;
         this.firstName = firstName;
@@ -29,7 +29,7 @@ public record ClientDTO(UUID id, String login, String firstName, String lastName
     }
 
 
-    public UUID id() {
+    public String id() {
         return id;
     }
 

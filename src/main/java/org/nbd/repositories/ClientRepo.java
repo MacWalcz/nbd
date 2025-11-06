@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface ClientRepo extends MongoRepository<Client, UUID> {
+public interface ClientRepo extends MongoRepository<Client, String> {
 }
