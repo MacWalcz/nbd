@@ -1,6 +1,6 @@
 services:
   mongodb1:
-    image: mongo:8.0.1
+    build: ./mongo
     container_name: mongodb1
     hostname: mongodb1
     networks:
@@ -9,59 +9,61 @@ services:
       - "27017:27017"
     volumes:
       - mongo1_data:/data/db
+      - mongo-configdb-data-1:/data/configdb
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=admin123
       - MONGO_INITDB_DATABASE=ndb
-    command: >
-      mongod --replSet replica_set_single 
-             --bind_ip_all 
-             --port 27017 
-             --auth 
-             --keyFile /etc/mongo/keyFile
+    command: --config /etc/mongod.conf --port 27017
     healthcheck:
       test: [ "CMD", "mongosh", "--port", "27017",  "--eval", "db.adminCommand('ping')" ]
-
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   mongodb2:
-    image: mongo:8.0.1
+    build: ./mongo
     container_name: mongodb2
     hostname: mongodb2
     networks:
       mongonet:
     ports:
-      - "27018:27017"
+      - "27018:27018"
     volumes:
       - mongo2_data:/data/db
-    command: >
-      mongod --replSet replica_set_single 
-             --bind_ip_all 
-             --port 27017
-             --auth 
-             --keyFile /etc/mongo/keyFile
+      - mongo-configdb-data-2:/data/configdb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin123
+      - MONGO_INITDB_DATABASE=ndb
+    command: --config /etc/mongod.conf --port 27018
     healthcheck:
-      test: [ "CMD", "mongosh","--port","27017", "--eval", "db.adminCommand('ping')" ]
-
+      test: [ "CMD", "mongosh","--port","27018", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   mongodb3:
-    image: mongo:8.0.1
+    build: ./mongo
     container_name: mongodb3
     hostname: mongodb3
     networks:
       mongonet:
     ports:
-      - "27019:27017"
+      - "27019:27019"
     volumes:
       - mongo3_data:/data/db
-    command: >
-      mongod --replSet replica_set_single 
-             --bind_ip_all 
-             --port 27017 
-             --auth 
-             --keyFile /etc/mongo/keyFile
+      - mongo-configdb-data-3:/data/configdb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin123
+      - MONGO_INITDB_DATABASE=ndb
+    command: --config /etc/mongod.conf --port 27019
     healthcheck:
-      test: [ "CMD", "mongosh","--port","27017" ,"--eval", "db.adminCommand('ping')" ]
-
+      test: [ "CMD", "mongosh","--port","27019" ,"--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   mongoinit:
     image: mongo:8.0.1
@@ -76,28 +78,30 @@ services:
       mongodb3:
         condition: service_healthy
     restart: on-failure
-    entrypoint: >
-      bash -c "
-        sleep 5
-        until mongosh --host mongodb1:27017 --port 27017 -u admin -p admin123 --authenticationDatabase admin --eval 'rs.status().ok' | grep -q '1'; do sleep 2; done
-        PRIMARY=$$(mongosh --host mongodb1:27017 --port 27017 --eval 'rs.isMaster().primary' | head -1)
-        mongosh --host $$PRIMARY --eval '
-          use admin
-          db.createUser({
-            user: "admin",
-            pwd: "admin123",
-            roles: [ { role: "root", db: "admin" } ]
-          })
-    
-        '
-        echo "dupa1"
-        
-      "
+    command: >
+      mongosh --host mongodb1:27017 --username admin --password admin123 --authenticationDatabase admin --eval
+      '
+      rs.initiate(
+        {
+          _id: "replica_set_single",
+          version: 1,
+          members: [
+            { _id: 0, host : "mongodb1:27017" },
+            { _id: 1, host : "mongodb2:27018" },
+            { _id: 2, host : "mongodb3:27019" }
+          ]
+        }
+      );
+      '
+
 
 volumes:
   mongo1_data:
+  mongo-configdb-data-1:
   mongo2_data:
+  mongo-configdb-data-2:
   mongo3_data:
+  mongo-configdb-data-3:
 
 networks:
   mongonet:

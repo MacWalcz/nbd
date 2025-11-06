@@ -1,6 +1,7 @@
 package org.nbd;
 
 import org.junit.jupiter.api.*;
+import org.nbd.exceptions.HouseNotAvaibleException;
 import org.nbd.model.*;
 import org.nbd.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,6 +140,22 @@ class RepositoryClusterIntegrationTest {
         rentRepository.deleteById(rent.getId());
         assertThat(rentRepository.findAll()).isEmpty();
     }
+
+    @Test
+    @Order(4)
+    void testRentLogic(){
+        Rent rent = new Rent(LocalDate.now(), LocalDate.now().plusDays(3), testClient, testHouse);
+        rentRepository.saveRent(rent);
+
+        Rent rent2 = new Rent(LocalDate.now().plusDays(1), LocalDate.now().plusDays(5), testClient, testHouse);
+
+        try {
+            rentRepository.saveRent(rent2);
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(HouseNotAvaibleException.class);
+        }
+    }
+
 
 
 }
