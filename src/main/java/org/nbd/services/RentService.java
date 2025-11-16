@@ -9,6 +9,7 @@ import org.nbd.repositories.HouseRepo;
 import org.nbd.repositories.RentRepo;
 import org.nbd.repositories.ClientRepo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -71,6 +72,7 @@ public class RentService {
         return rentRepo.save(rent);
     }
 
+    @Transactional
     public void deleteActiveRent(String rentId) {
         Rent rent = rentRepo.findById(rentId)
                 .orElseThrow(() -> new RentNotFoundException(rentId));

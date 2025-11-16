@@ -7,6 +7,7 @@ import org.nbd.model.House;
 import org.nbd.repositories.HouseRepo;
 import org.nbd.repositories.RentRepo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -38,6 +39,7 @@ public class HouseService {
         return houseRepo.save(house);
     }
 
+    @Transactional
     public void deleteHouse(String id) {
         House house = houseRepo.findById(id)
                 .orElseThrow(() -> new HouseNotFoundException(id));
