@@ -28,4 +28,11 @@ public interface RentRepo extends MongoRepository<Rent, String> {
     List<Rent> findOverlappingReservations(String id, LocalDate startDate, LocalDate endDate);
 
     boolean existsByHouseIdAndEndDateIsNull(String houseId);
+
+    List<Rent> findByClientIdAndEndDateIsNull(String clientId);
+    List<Rent> findByClientIdAndEndDateIsNotNull(String clientId);
+
+    List<Rent> findByHouseIdAndEndDateIsNull(String houseId);
+    List<Rent> findByHouseIdAndEndDateIsNotNull(String houseId);
+
 }

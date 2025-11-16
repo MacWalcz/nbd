@@ -5,7 +5,11 @@ import org.nbd.converters.RentConverter;
 import org.nbd.dto.RentDTO;
 import org.nbd.model.Rent;
 import org.nbd.services.RentService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -22,11 +26,40 @@ public class RentController {
     }
 
     @PostMapping
-    public RentDTO postRent(@RequestBody RentDTO dto) {
-        Rent rent = converter.rentDTOToRent(dto);
-        Rent saved = service.createRent(rent);
-        return converter.rentToRentDTO(saved);
+    public Rent create(@RequestParam String clientId,
+                       @RequestParam String houseId,
+                       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startTime) {
+        return service.createRent(clientId, houseId, startTime);
     }
 
+    @GetMapping("/current/client/{clientId}")
+    public List<Rent> getCurrentRentsForClient(@PathVariable String clientId) {
+        return service.getCurrentRentsForClient(clientId);
+    }
+
+    @GetMapping("/past/client/{clientId}")
+    public List<Rent> getPastRentsForClient(@PathVariable String clientId) {
+        return service.getPastRentsForClient(clientId);
+    }
+
+    @GetMapping("/current/house/{houseId}")
+    public List<Rent> getCurrentRentsForHouse(@PathVariable String houseId) {
+        return service.getCurrentRentsForHouse(houseId);
+    }
+
+    @GetMapping("/past/house/{houseId}")
+    public List<Rent> getPastRentsForHouse(@PathVariable String houseId) {
+        return service.getPastRentsForHouse(houseId);
+    }
+
+    @PutMapping("/{id}/end")
+    public Rent endRent(@PathVariable String id, @RequestParam LocalDate endTime) {
+        return service.endRent(id, endTime);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable String id) {
+        service.deleteActiveRent(id);
+    }
 }
 

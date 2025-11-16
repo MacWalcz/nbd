@@ -13,6 +13,7 @@ import java.time.temporal.ChronoUnit;
 @SuperBuilder
 @Document(collection = "rents")
 public class Rent extends AbstractEntity {
+
     private LocalDate startDate;
     private LocalDate endDate;
 
@@ -22,14 +23,23 @@ public class Rent extends AbstractEntity {
     @DBRef
     private House house;
 
-    private double cost;
+    private Double cost;
 
-    public Rent(LocalDate startDate, LocalDate endDate, Client client, House house) {
+    public Rent(LocalDate startDate, Client client, House house) {
         this.startDate = startDate;
-        this.endDate = endDate;
         this.client = client;
         this.house = house;
+        this.cost = null;
+    }
+
+    public void endRent(LocalDate endDate) {
+        this.endDate = endDate;
         long daysBetween = ChronoUnit.DAYS.between(startDate, endDate);
         this.cost = daysBetween * house.getPrice() * client.getClientType().getDiscount();
     }
+
+    public boolean isActive() {
+        return endDate == null;
+    }
 }
+
