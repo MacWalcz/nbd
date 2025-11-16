@@ -1,5 +1,6 @@
 package org.nbd.rest;
 
+import jakarta.validation.*;
 import lombok.RequiredArgsConstructor;
 import org.nbd.converters.AdministratorConverter;
 import org.nbd.dto.AdministratorDTO;
@@ -26,7 +27,7 @@ public class AdministratorController {
     }
 
     @PostMapping
-    public AdministratorDTO postAdministrator(@RequestBody AdministratorDTO dto) {
+    public AdministratorDTO postAdministrator(@Valid @RequestBody AdministratorDTO dto) {
         Administrator admin = converter.administratorDTOToAdministrator(dto);
         Administrator saved = service.createAdministrator(admin);
         return converter.administratorToAdministratorDTO(saved);
@@ -48,7 +49,7 @@ public class AdministratorController {
     }
 
     @PutMapping("/{id}")
-    public Administrator update(@PathVariable String id, @RequestBody AdministratorDTO dto) {
+    public Administrator update(@PathVariable String id, @Valid @RequestBody AdministratorDTO dto) {
         Administrator administrator = converter.administratorDTOToAdministrator(dto);
         return service.update(id, administrator);
     }

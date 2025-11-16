@@ -1,5 +1,6 @@
 package org.nbd.rest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.nbd.converters.RentConverter;
 import org.nbd.dto.RentDTO;
@@ -26,10 +27,10 @@ public class RentController {
     }
 
     @PostMapping
-    public Rent create(@RequestParam String clientId,
-                       @RequestParam String houseId,
-                       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startTime) {
-        return service.createRent(clientId, houseId, startTime);
+    public Rent create(@Valid @RequestParam String client,
+                       @Valid @RequestParam String house,
+                       @Valid @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startTime) {
+        return service.createRent(client, house, startTime);
     }
 
     @GetMapping("/current/client/{clientId}")

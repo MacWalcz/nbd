@@ -1,9 +1,11 @@
 package org.nbd.rest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.nbd.converters.ClientConverter;
 import org.nbd.dto.ClientDTO;
 import org.nbd.model.Client;
+import org.nbd.repositories.ClientRepo;
 import org.nbd.services.ClientService;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +19,7 @@ public class ClientController {
 
     private final ClientService service;
     private final ClientConverter converter;
+    private final ClientRepo repo;
 
     @GetMapping("/{id}")
     public ClientDTO getClient(@PathVariable String id) {
@@ -24,7 +27,7 @@ public class ClientController {
     }
 
     @PostMapping
-    public ClientDTO postClient(@RequestBody ClientDTO dto) {
+    public ClientDTO postClient(@Valid @RequestBody ClientDTO dto) {
         Client client = converter.clientDTOToClient(dto);
         Client saved = service.createClient(client);
         return converter.clientToClientDTO(saved);
@@ -46,8 +49,8 @@ public class ClientController {
     }
 
     @PutMapping("/{id}")
-    public Client update(@PathVariable String id, @RequestBody ClientDTO dto) {
-        Client client = converter.clientDTOToClient(dto);
+    public Client update(@PathVariable String id, @Valid @RequestBody ClientDTO dto) {
+        Client client = converter.clientDTOToClient(dto, id);
         return service.update(id, client);
     }
 

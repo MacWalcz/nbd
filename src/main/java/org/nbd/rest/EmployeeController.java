@@ -1,5 +1,6 @@
 package org.nbd.rest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.nbd.converters.EmployeeConverter;
 import org.nbd.dto.AdministratorDTO;
@@ -28,7 +29,7 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public EmployeeDTO postEmployee(@RequestBody EmployeeDTO dto) {
+    public EmployeeDTO postEmployee(@Valid @RequestBody EmployeeDTO dto) {
         Employee employee = converter.employeeDTOToEmployee(dto);
         Employee saved = service.createEmployee(employee);
         return converter.employeeToEmployeeDTO(saved);
@@ -50,7 +51,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
-    public Employee update(@PathVariable String id, @RequestBody EmployeeDTO dto) {
+    public Employee update(@PathVariable String id, @Valid @RequestBody EmployeeDTO dto) {
         Employee employee = converter.employeeDTOToEmployee(dto);
         return service.update(id, employee);
     }

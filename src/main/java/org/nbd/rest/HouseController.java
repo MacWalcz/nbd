@@ -1,5 +1,6 @@
 package org.nbd.rest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.nbd.converters.HouseConverter;
 import org.nbd.dto.HouseDTO;
@@ -24,7 +25,7 @@ public class HouseController {
     }
 
     @PostMapping
-    public HouseDTO postHouse(@RequestBody HouseDTO dto) {
+    public HouseDTO postHouse(@Valid @RequestBody HouseDTO dto) {
         House house = converter.houseDTOToHouse(dto);
         House saved = service.createHouse(house);
         return converter.houseToHouseDTO(saved);
@@ -36,7 +37,7 @@ public class HouseController {
     }
 
     @PutMapping("/{id}")
-    public House update(@PathVariable String id, @RequestBody House house) {
+    public House update(@PathVariable String id, @Valid @RequestBody House house) {
         return service.updateHouse(id, house);
     }
 

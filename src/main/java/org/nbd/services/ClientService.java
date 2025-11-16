@@ -3,6 +3,7 @@ package org.nbd.services;
 import lombok.AllArgsConstructor;
 import org.nbd.dto.ClientDTO;
 import org.nbd.exceptions.HouseNotFoundException;
+import org.nbd.exceptions.LoginAlreadyExists;
 import org.nbd.exceptions.UserNotFoundException;
 import org.nbd.model.Client;
 import org.nbd.model.House;
@@ -24,6 +25,9 @@ public class ClientService {
     }
 
     public Client createClient(Client client) {
+        if (clientRepo.existsByLogin(client.getLogin())) {
+            throw new LoginAlreadyExists(client.getLogin());
+        }
         return clientRepo.save(client);
     }
 
@@ -43,6 +47,9 @@ public class ClientService {
     public Client update(String id, Client updatedClient) {
         Client client = clientRepo.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
+        if (clientRepo.existsByLogin(updatedClient.getLogin())) {
+            throw new LoginAlreadyExists(updatedClient.getLogin());
+        }
         client.setLogin(updatedClient.getLogin());
         if (updatedClient.getFirstName() != null) client.setFirstName(updatedClient.getFirstName());
         if (updatedClient.getLastName() != null) client.setLastName(updatedClient.getLastName());

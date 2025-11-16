@@ -12,4 +12,6 @@ public interface ClientRepo extends MongoRepository<Client, String> {
     Optional<Client> findByLogin(String login);
 
     List<Client> findAllByLoginContainingIgnoreCase(String partial);
+
+    boolean existsByLogin(String login);
 }
