@@ -6,16 +6,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @SuperBuilder
 @Document(collection = "houses")
 public class House extends AbstractEntity {
     private String houseNumber;
     private double price;
     private double area;
-
-    public House(String houseNumber, double price, double area) {
-        this.houseNumber = houseNumber;
-        this.price = price;
-        this.area = area;
-    }
 }

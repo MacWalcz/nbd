@@ -1,35 +1,43 @@
 package org.nbd.converters;
 
+import lombok.RequiredArgsConstructor;
 import org.nbd.dto.ClientDTO;
 import org.nbd.model.Client;
+import org.nbd.model.ClientType;
+import org.nbd.repositories.ClientTypeRepo;
+import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
+@Component
+@RequiredArgsConstructor
 public class ClientConverter {
-    public ClientConverter() {
+
+    private final ClientTypeRepo repo;
+
+    public ClientDTO clientToClientDTO(Client client) {
+        return new ClientDTO(
+                client.getId(),
+                client.getLogin(),
+                client.getFirstName(),
+                client.getLastName(),
+                client.getPhoneNumber(),
+                client.isActive(),
+                client.getClientType().getId()
+        );
     }
 
-    public static ClientDTO clientToClientDTO(Client client) {
-        return new ClientDTO(client.getId(), client.getLogin(), client.getFirstName(), client.getLastName(), client.getPhoneNumeber(), client.getClientType());
-    }
+    public Client clientDTOToClient(ClientDTO dto) {
 
-    public static Client clientDTOToClient(ClientDTO clientDTO) {
+        ClientType type = repo.findById(dto.clientType())
+                .orElseThrow(() -> new RuntimeException("Invalid client type: " + dto.clientType()));
+
         return Client.builder()
-                .id(clientDTO.id())
-                .login(clientDTO.login())
-                .firstName(clientDTO.firstName())
-                .lastName(clientDTO.lastName())
-                .phoneNumeber(clientDTO.phoneNumber())
-                .clientType(clientDTO.clientType())
+                .id(dto.id())
+                .login(dto.login())
+                .firstName(dto.firstName())
+                .lastName(dto.lastName())
+                .phoneNumber(dto.phoneNumber())
+                .active(dto.active())
+                .clientType(type)
                 .build();
-
     }
-
-    public static List<ClientDTO> clientsToClientDTOs(List<Client> clients) {
-        return null == clients ? null : (List)clients.stream().filter(Objects::nonNull).map(ClientConverter::clientToClientDTO).collect(Collectors.toList());
-    }
-
-
 }

@@ -50,7 +50,7 @@ class RepositoryClusterIntegrationTest {
                 .login("karabeika")
                 .firstName("Mikita")
                 .lastName("Test")
-                .phoneNumeber("505050505")
+                .phoneNumber("505050505")
                 .clientType(testClientType)
                 .active(true)
                 .build();
@@ -74,7 +74,7 @@ class RepositoryClusterIntegrationTest {
                 .login("user1")
                 .firstName("Jan")
                 .lastName("Kowalski")
-                .phoneNumeber("123456789")
+                .phoneNumber("123456789")
                 .clientType(testClientType)
                 .build();
 

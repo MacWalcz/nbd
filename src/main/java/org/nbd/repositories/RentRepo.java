@@ -27,4 +27,5 @@ public interface RentRepo extends MongoRepository<Rent, String> {
             "{ 'startDate': { '$gte': ?1, '$lte': ?2 } } ] }")
     List<Rent> findOverlappingReservations(String id, LocalDate startDate, LocalDate endDate);
 
+    boolean existsByHouseIdAndEndDateIsNull(String houseId);
 }

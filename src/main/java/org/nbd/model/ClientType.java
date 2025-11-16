@@ -1,5 +1,6 @@
 package org.nbd.model;
 
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "client_types")
