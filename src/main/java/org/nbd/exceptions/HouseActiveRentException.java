@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 public class HouseActiveRentException extends AppBaseException {
     public HouseActiveRentException(String houseId) {
-        super(HttpStatus.CONFLICT, "House is rented");
+        super(HttpStatus.CONFLICT, "House is already rented");
     }
 }
 

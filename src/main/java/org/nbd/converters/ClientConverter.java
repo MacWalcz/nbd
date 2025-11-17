@@ -10,12 +10,6 @@ import java.util.stream.Collectors;
 
 public class ClientConverter {
 
-    public static Map<String, Class<? extends ClientType>> typeMap = Map.of(
-            "1", Default.class,
-            "2", Premium .class,
-            "3", Luxury.class
-    );
-
     public ClientConverter() {
     }
 

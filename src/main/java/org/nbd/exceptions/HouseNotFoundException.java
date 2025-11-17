@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class HouseNotFoundException extends AppBaseException {
     public HouseNotFoundException(String id) {
-        super(HttpStatus.NOT_FOUND,"House with id '" + id + "' not found");
+        super(HttpStatus.NOT_FOUND,"House with id " + id + " not found");
     }
 }

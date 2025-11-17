@@ -6,6 +6,6 @@ import org.springframework.http.HttpStatusCode;
 
 public class UserNotFoundException extends AppBaseException {
     public UserNotFoundException(String id) {
-        super(HttpStatus.NOT_FOUND, "Client with id '" + id + "' not found");
+        super(HttpStatus.NOT_FOUND, "Client with id " + id + " not found");
     }
 }
