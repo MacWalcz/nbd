@@ -5,11 +5,9 @@ import org.nbd.dto.EmployeeDTO;
 import org.nbd.model.Employee;
 import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
 public class EmployeeConverter {
 
-    public EmployeeDTO employeeToEmployeeDTO(Employee employee) {
+    public static EmployeeDTO employeeToEmployeeDTO(Employee employee) {
         return new EmployeeDTO(
                 employee.getId(),
                 employee.getLogin(),
@@ -20,7 +18,7 @@ public class EmployeeConverter {
         );
     }
 
-    public Employee employeeDTOToEmployee(EmployeeDTO dto) {
+    public static Employee employeeDTOToEmployee(EmployeeDTO dto) {
 
         return Employee.builder()
                 .id(dto.id())

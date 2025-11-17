@@ -1,6 +1,7 @@
 package org.nbd.rest;
 
 import jakarta.validation.Valid;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.nbd.converters.ClientConverter;
 import org.nbd.dto.ClientDTO;
@@ -11,26 +12,28 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.nbd.converters.ClientConverter.clientDTOToClient;
+import static org.nbd.converters.ClientConverter.clientToClientDTO;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/clients")
 @CrossOrigin(originPatterns = {"http://localhost:[*]"})
 public class ClientController {
 
-    private final ClientService service;
-    private final ClientConverter converter;
-    private final ClientRepo repo;
+    private final @NonNull ClientService service;
+
 
     @GetMapping("/{id}")
     public ClientDTO getClient(@PathVariable String id) {
-        return converter.clientToClientDTO(service.getClient(id));
+        return clientToClientDTO(service.getClient(id));
     }
 
     @PostMapping
     public ClientDTO postClient(@Valid @RequestBody ClientDTO dto) {
-        Client client = converter.clientDTOToClient(dto);
+        Client client = clientDTOToClient(dto);
         Client saved = service.createClient(client);
-        return converter.clientToClientDTO(saved);
+        return clientToClientDTO(saved);
     }
 
     @GetMapping("/by-login/{login}")
@@ -50,7 +53,7 @@ public class ClientController {
 
     @PutMapping("/{id}")
     public Client update(@PathVariable String id, @Valid @RequestBody ClientDTO dto) {
-        Client client = converter.clientDTOToClient(dto, id);
+        Client client = clientDTOToClient(dto);
         return service.update(id, client);
     }
 

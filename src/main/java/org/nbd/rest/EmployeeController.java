@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.nbd.converters.EmployeeConverter.employeeDTOToEmployee;
+import static org.nbd.converters.EmployeeConverter.employeeToEmployeeDTO;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/employees")
@@ -21,18 +24,18 @@ import java.util.List;
 public class EmployeeController {
 
     private final EmployeeService service;
-    private final EmployeeConverter converter;
+
 
     @GetMapping("/{id}")
     public EmployeeDTO getEmployee(@PathVariable String id) {
-        return converter.employeeToEmployeeDTO(service.getEmployee(id));
+        return employeeToEmployeeDTO(service.getEmployee(id));
     }
 
     @PostMapping
     public EmployeeDTO postEmployee(@Valid @RequestBody EmployeeDTO dto) {
-        Employee employee = converter.employeeDTOToEmployee(dto);
+        Employee employee = employeeDTOToEmployee(dto);
         Employee saved = service.createEmployee(employee);
-        return converter.employeeToEmployeeDTO(saved);
+        return employeeToEmployeeDTO(saved);
     }
 
     @GetMapping("/by-login/{login}")
@@ -52,7 +55,7 @@ public class EmployeeController {
 
     @PutMapping("/{id}")
     public Employee update(@PathVariable String id, @Valid @RequestBody EmployeeDTO dto) {
-        Employee employee = converter.employeeDTOToEmployee(dto);
+        Employee employee = employeeDTOToEmployee(dto);
         return service.update(id, employee);
     }
 

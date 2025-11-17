@@ -5,11 +5,10 @@ import org.nbd.dto.AdministratorDTO;
 import org.nbd.model.Administrator;
 import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
+
 public class AdministratorConverter {
 
-    public AdministratorDTO administratorToAdministratorDTO(Administrator administrator) {
+    public static AdministratorDTO administratorToAdministratorDTO(Administrator administrator) {
         return new AdministratorDTO(
                 administrator.getId(),
                 administrator.getLogin(),
@@ -20,7 +19,7 @@ public class AdministratorConverter {
         );
     }
 
-    public Administrator administratorDTOToAdministrator(AdministratorDTO dto) {
+    public static Administrator administratorDTOToAdministrator(AdministratorDTO dto) {
         return Administrator.builder()
                 .id(dto.id())
                 .login(dto.login())

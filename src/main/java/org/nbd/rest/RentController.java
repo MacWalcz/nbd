@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.nbd.converters.RentConverter.rentToRentDTO;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/rents")
@@ -19,11 +21,11 @@ import java.util.List;
 public class RentController {
 
     private final RentService service;
-    private final RentConverter converter;
+
 
     @GetMapping("/{id}")
     public RentDTO getRent(@PathVariable String id) {
-        return converter.rentToRentDTO(service.getRent(id));
+        return rentToRentDTO(service.getRent(id));
     }
 
     @PostMapping

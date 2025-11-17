@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.nbd.converters.AdministratorConverter.administratorDTOToAdministrator;
+import static org.nbd.converters.AdministratorConverter.administratorToAdministratorDTO;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/administrators")
@@ -19,18 +22,18 @@ import java.util.List;
 public class AdministratorController {
 
     private final AdministratorService service;
-    private final AdministratorConverter converter;
+
 
     @GetMapping("/{id}")
     public AdministratorDTO getAdministrator(@PathVariable String id) {
-        return converter.administratorToAdministratorDTO(service.getAdministrator(id));
+        return administratorToAdministratorDTO(service.getAdministrator(id));
     }
 
     @PostMapping
     public AdministratorDTO postAdministrator(@Valid @RequestBody AdministratorDTO dto) {
-        Administrator admin = converter.administratorDTOToAdministrator(dto);
+        Administrator admin = administratorDTOToAdministrator(dto);
         Administrator saved = service.createAdministrator(admin);
-        return converter.administratorToAdministratorDTO(saved);
+        return administratorToAdministratorDTO(saved);
     }
 
     @GetMapping("/by-login/{login}")
@@ -50,7 +53,7 @@ public class AdministratorController {
 
     @PutMapping("/{id}")
     public Administrator update(@PathVariable String id, @Valid @RequestBody AdministratorDTO dto) {
-        Administrator administrator = converter.administratorDTOToAdministrator(dto);
+        Administrator administrator = administratorDTOToAdministrator(dto);
         return service.update(id, administrator);
     }
 

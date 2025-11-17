@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RentConverter {
 
-    public RentDTO rentToRentDTO(Rent rent) {
+    public static RentDTO rentToRentDTO(Rent rent) {
         return new RentDTO(
             rent.getId(),
             rent.getStartDate(),
@@ -20,7 +20,7 @@ public class RentConverter {
         );
     }
 
-    public Rent rentDTOToRent(RentDTO dto) {
+    public static Rent rentDTOToRent(RentDTO dto) {
 
         return Rent.builder()
                 .id(dto.id())

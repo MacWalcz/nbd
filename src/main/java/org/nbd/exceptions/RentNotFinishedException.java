@@ -1,12 +1,11 @@
 package org.nbd.exceptions;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.CONFLICT)
-public class RentNotFinishedException extends RuntimeException {
+
+public class RentNotFinishedException extends AppBaseException {
     public RentNotFinishedException(String id) {
-        super("Can't delete the finished rent with id " + id);
+        super(HttpStatus.CONFLICT ,"Can't delete the finished rent with id " + id);
     }
 }
 

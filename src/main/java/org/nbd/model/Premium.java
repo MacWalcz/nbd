@@ -6,4 +6,10 @@ public class Premium extends ClientType {
     public double getDiscount() {
         return 0.8;
     }
+
+    @Override
+    public String toString() {
+        return "2";
+    }
+
 }

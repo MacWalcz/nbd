@@ -62,7 +62,7 @@ public class DataInit {
         if(clientRepo.findById("333333333333333333333333").isEmpty()) {
             Client client3 = Client.builder()
                     .id("333333333333333333333333")
-                    .login("klient1_copy") // похожий логин
+                    .login("klient1_copy")
                     .firstName("Piotr")
                     .lastName("Nowak")
                     .phoneNumber("555555555")

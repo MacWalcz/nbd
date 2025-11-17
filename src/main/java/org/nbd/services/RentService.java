@@ -1,6 +1,7 @@
 package org.nbd.services;
 
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.nbd.exceptions.*;
 import org.nbd.model.Client;
 import org.nbd.model.House;
@@ -8,6 +9,7 @@ import org.nbd.model.Rent;
 import org.nbd.repositories.HouseRepo;
 import org.nbd.repositories.RentRepo;
 import org.nbd.repositories.ClientRepo;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,12 +17,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 @AllArgsConstructor
+@Component
 @Service
 public class RentService {
 
-    private final RentRepo rentRepo;
-    private final ClientRepo clientRepo;
-    private final HouseRepo houseRepo;
+    private final @NonNull RentRepo rentRepo;
+    private final @NonNull ClientRepo clientRepo;
+    private final @NonNull HouseRepo houseRepo;
 
     public Rent getRent(String id) {
         return rentRepo.findById(id).orElseThrow(() -> new RentNotFoundException(id));

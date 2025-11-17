@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.nbd.converters.HouseConverter.houseDTOToHouse;
+import static org.nbd.converters.HouseConverter.houseToHouseDTO;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/houses")
@@ -17,18 +20,18 @@ import java.util.List;
 public class HouseController {
 
     private final HouseService service;
-    private final HouseConverter converter;
+
 
     @GetMapping("/{id}")
     public HouseDTO getHouse(@PathVariable String id) {
-        return converter.houseToHouseDTO(service.getHouse(id));
+        return houseToHouseDTO(service.getHouse(id));
     }
 
     @PostMapping
     public HouseDTO postHouse(@Valid @RequestBody HouseDTO dto) {
-        House house = converter.houseDTOToHouse(dto);
+        House house = houseDTOToHouse(dto);
         House saved = service.createHouse(house);
-        return converter.houseToHouseDTO(saved);
+        return houseToHouseDTO(saved);
     }
 
     @GetMapping

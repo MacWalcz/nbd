@@ -6,12 +6,14 @@ import org.nbd.exceptions.HouseNotFoundException;
 import org.nbd.model.House;
 import org.nbd.repositories.HouseRepo;
 import org.nbd.repositories.RentRepo;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @AllArgsConstructor
+@Component
 @Service
 public class HouseService {
 

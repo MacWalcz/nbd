@@ -8,4 +8,11 @@ public class Default extends ClientType  {
     public double getDiscount() {
         return 1;
     }
+
+    @Override
+    public String toString() {
+        return "1";
+    }
+
+
 }

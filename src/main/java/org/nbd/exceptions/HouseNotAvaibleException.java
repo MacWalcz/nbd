@@ -1,7 +1,9 @@
 package org.nbd.exceptions;
 
-public class HouseNotAvaibleException extends RuntimeException {
-    public HouseNotAvaibleException(String message) {
-        super(message);
+import org.springframework.http.HttpStatus;
+
+public class HouseNotAvaibleException extends AppBaseException {
+    public HouseNotAvaibleException(String id) {
+        super(HttpStatus.CONFLICT, "House" + id + "is not available.");
     }
 }

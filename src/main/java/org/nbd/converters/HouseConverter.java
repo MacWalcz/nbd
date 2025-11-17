@@ -5,11 +5,10 @@ import org.nbd.dto.HouseDTO;
 import org.nbd.model.House;
 import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
+
 public class HouseConverter {
 
-    public HouseDTO houseToHouseDTO(House house) {
+    public static HouseDTO houseToHouseDTO(House house) {
         return new HouseDTO(
             house.getId(),
             house.getHouseNumber(),
@@ -18,7 +17,7 @@ public class HouseConverter {
         );
     }
 
-    public House houseDTOToHouse(HouseDTO dto) {
+    public static House houseDTOToHouse(HouseDTO dto) {
 
         return House.builder()
                 .id(dto.id())

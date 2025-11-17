@@ -1,6 +1,7 @@
 package org.nbd.services;
 
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.nbd.dto.ClientDTO;
 import org.nbd.exceptions.HouseNotFoundException;
 import org.nbd.exceptions.LoginAlreadyExists;
@@ -8,6 +9,7 @@ import org.nbd.exceptions.UserNotFoundException;
 import org.nbd.model.Client;
 import org.nbd.model.House;
 import org.nbd.repositories.ClientRepo;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -18,17 +20,22 @@ import java.util.List;
 @Service
 public class ClientService {
 
-    private ClientRepo clientRepo;
+    private final @NonNull ClientRepo clientRepo;
 
     public Client getClient(String id) {
         return clientRepo.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
     public Client createClient(Client client) {
-        if (clientRepo.existsByLogin(client.getLogin())) {
+        try {
+            return clientRepo.save(client);
+        } catch (DuplicateKeyException e) {
             throw new LoginAlreadyExists(client.getLogin());
+        } catch (Exception e) {
+            throw new RuntimeException("Wystąpił błąd podczas zapisu użytkownika");
         }
-        return clientRepo.save(client);
+
+
     }
 
     public Client getByLogin(String login) {
@@ -47,9 +54,6 @@ public class ClientService {
     public Client update(String id, Client updatedClient) {
         Client client = clientRepo.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
-        if (clientRepo.existsByLogin(updatedClient.getLogin())) {
-            throw new LoginAlreadyExists(updatedClient.getLogin());
-        }
         client.setLogin(updatedClient.getLogin());
         if (updatedClient.getFirstName() != null) client.setFirstName(updatedClient.getFirstName());
         if (updatedClient.getLastName() != null) client.setLastName(updatedClient.getLastName());

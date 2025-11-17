@@ -1,11 +1,11 @@
 package org.nbd.exceptions;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.http.HttpStatusCode;
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-public class UserNotFoundException extends RuntimeException {
+
+public class UserNotFoundException extends AppBaseException {
     public UserNotFoundException(String id) {
-        super("Client with id '" + id + "' not found");
+        super(HttpStatus.NOT_FOUND, "Client with id '" + id + "' not found");
     }
 }

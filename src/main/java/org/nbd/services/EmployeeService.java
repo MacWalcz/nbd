@@ -1,6 +1,7 @@
 package org.nbd.services;
 
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.nbd.exceptions.UserNotFoundException;
 import org.nbd.model.Client;
 import org.nbd.model.Employee;
@@ -15,7 +16,7 @@ import java.util.List;
 @Service
 public class EmployeeService {
 
-    private final EmployeeRepo employeeRepo;
+    private final @NonNull EmployeeRepo employeeRepo;
 
     public Employee getEmployee(String id) {
         return employeeRepo.findById(id)
