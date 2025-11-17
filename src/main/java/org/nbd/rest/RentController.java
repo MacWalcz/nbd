@@ -31,7 +31,7 @@ public class RentController {
     @PostMapping
     public Rent create(@Valid @RequestParam String client,
                        @Valid @RequestParam String house,
-                       @Valid @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startTime) {
+                       @Valid @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startTime) {
         return service.createRent(client, house, startTime);
     }
 

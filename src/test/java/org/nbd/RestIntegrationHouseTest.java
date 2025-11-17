@@ -33,7 +33,7 @@ public class RestIntegrationHouseTest {
                 .post()
                 .then()
                 .statusCode(200)
-                .body("price", equalTo(550.0));
+                .body("price", equalTo(550.0F));
 
     }
     @Test
@@ -46,7 +46,7 @@ public class RestIntegrationHouseTest {
                 }
                 """;
 
-        String clientId = given()
+        String houseId = given()
                 .contentType(ContentType.JSON)
                 .body(json)
                 .when()
@@ -57,7 +57,7 @@ public class RestIntegrationHouseTest {
 
 
         given()
-                .pathParam("id", clientId)
+                .pathParam("id", houseId)
                 .when()
                 .get("/{id}")
                 .then()
@@ -102,9 +102,30 @@ public class RestIntegrationHouseTest {
                 .put("/{id}")
                 .then()
                 .statusCode(200)
-                .body("area", equalTo(60.0));
+                .body("area", equalTo(60.0F));
 
     }
+
+    @Test
+    void testCreateHouseInvalidArea() {
+
+        String json = """
+                {
+                      "houseNumber": "A14",
+                      "price": 110.0,
+                      "area": 0.0
+                }
+                """;
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(json)
+                .when()
+                .post()
+                .then()
+                .statusCode(400);
+    }
+
 
 
 

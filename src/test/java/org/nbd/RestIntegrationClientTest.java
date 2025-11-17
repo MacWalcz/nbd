@@ -2,6 +2,7 @@ package org.nbd;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -17,21 +18,18 @@ public class RestIntegrationClientTest {
         RestAssured.basePath = "/clients";
     }
 
-    // ---------------------------
-    // Testy pozytywne
-    // ---------------------------
-
     @Test
     void testCreateClient() {
-        String json = """
+        String login = RandomStringUtils.randomAlphanumeric(3, 31);
+        String json = String.format("""
             {
-                "login": "tdsad",
+                "login": "%s",
                 "firstName": "Jan",
                 "lastName": "Kowalski",
                 "phoneNumber": "555555555",
                 "clientType": 1
             }
-            """;
+            """,login);
 
         given()
                 .contentType(ContentType.JSON)
@@ -40,23 +38,24 @@ public class RestIntegrationClientTest {
                 .post()
                 .then()
                 .statusCode(200)
-                .body("login", equalTo("tdsad"))
+                .body("login", equalTo(login))
                 .body("firstName", equalTo("Jan"));
     }
 
     @Test
     void testReadClient() {
-        // Najpierw utwórz klienta
-        String json = """
+        String login = RandomStringUtils.randomAlphanumeric(3, 31);
+
+        String json = String.format("""
             {
-                "login": "readuser2",
+                "login": "%s",
                 "firstName": "Anna",
                 "lastName": "Nowak",
                 "phoneNumber": "555555556",
                 "active": true,
                 "clientType": 1
             }
-            """;
+            """,login);
 
         String clientId = given()
                 .contentType(ContentType.JSON)
@@ -67,30 +66,30 @@ public class RestIntegrationClientTest {
                 .extract()
                 .path("id");
 
-        // Pobierz klienta
+
         given()
                 .pathParam("id", clientId)
                 .when()
                 .get("/{id}")
                 .then()
                 .statusCode(200)
-                .body("login", equalTo("readuser2"))
+                .body("login", equalTo(login))
                 .body("firstName", equalTo("Anna"));
     }
 
     @Test
     void testUpdateClient() {
-        // Tworzenie klienta
-        String json = """
+        String login = RandomStringUtils.randomAlphanumeric(3, 31);
+        String json = String.format("""
             {
-                "login": "updateuser",
+                "login": "%s",
                 "firstName": "Piotr",
                 "lastName": "Zielinski",
                 "phoneNumber": "555555557",
                 "active": true,
                 "clientType": 1
             }
-            """;
+            """,login);
 
         String clientId = given()
                 .contentType(ContentType.JSON)
@@ -101,17 +100,17 @@ public class RestIntegrationClientTest {
                 .extract()
                 .path("id");
 
-        // Aktualizacja
-        String updateJson = """
+
+        String updateJson = String.format("""
             {
-                "login": "updateuser",
+                "login": "%s",
                 "firstName": "Piotr",
                 "lastName": "Kowalski",
                 "phoneNumber": "555555557",
                 "active": false,
                 "clientType": 1
             }
-            """;
+            """,login);
 
         given()
                 .contentType(ContentType.JSON)
@@ -125,24 +124,17 @@ public class RestIntegrationClientTest {
                 .body("active", equalTo(false));
     }
 
-    // ---------------------------
-    // Testy negatywne
-    // ---------------------------
 
     @Test
     void testCreateClientInvalidLogin() {
-        // Login za krótki
+
         String json = """
             {
                 "login": "ab",
                 "firstName": "Jan",
                 "lastName": "Kowalski",
                 "phoneNumber": "555555558",
-                "active": true,
-                "clientType": {
-                    "type": "default",
-                    "discount": 1.0
-                }
+                "clientType": 1
             }
             """;
 
@@ -157,21 +149,18 @@ public class RestIntegrationClientTest {
 
     @Test
     void testDuplicateLogin() {
-        String json = """
+        String login = RandomStringUtils.randomAlphanumeric(3, 31);
+        String json = String.format("""
             {
-                "login": "duplicateuser",
+                "login": "%s",
                 "firstName": "Adam",
                 "lastName": "Nowak",
                 "phoneNumber": "555555559",
-                "active": true,
-                "clientType": {
-                    "type": "default",
-                    "discount": 1.0
-                }
+                 "clientType": 1
             }
-            """;
+            """,login);
 
-        // pierwszy insert
+
         given()
                 .contentType(ContentType.JSON)
                 .body(json)
@@ -180,15 +169,15 @@ public class RestIntegrationClientTest {
                 .then()
                 .statusCode(200);
 
-        // drugi insert z tym samym loginem
+
         given()
                 .contentType(ContentType.JSON)
                 .body(json)
                 .when()
                 .post()
                 .then()
-                .statusCode(409); // zakładamy, że masz handler dla DuplicateKeyException -> 409
+                .statusCode(409);
     }
 
-    // Tutaj możesz dodać testy dla zasobów (House / Rent) analogicznie
+
 }
