@@ -1,14 +1,11 @@
 package org.nbd.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Version;
-import org.springframework.data.mongodb.core.mapping.FieldType;
-import org.springframework.data.mongodb.core.mapping.MongoId;
+import org.bson.codecs.pojo.annotations.BsonId;
+import org.bson.codecs.pojo.annotations.BsonProperty;
+import org.bson.types.ObjectId;
+
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -18,9 +15,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @SuperBuilder
 public abstract class AbstractEntity implements Serializable {
-    @Id
-    private String id;
+    //@Id
+    @BsonId
+    private ObjectId id;
 
-    @Version
+    //@Version
     private long version;
 }

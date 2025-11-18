@@ -1,15 +1,21 @@
 package org.nbd.repositories;
 
-import org.springframework.stereotype.Repository;
+import org.bson.types.ObjectId;
+import org.nbd.model.Rent;
+
+import java.util.List;
 
 public interface RepoManager<T> {
-    void create(T t);
+    void save(T t);
 
-    T read(long id);
+    T findById(ObjectId id);
 
-    void update(long id, T t);
+    void update(ObjectId id, T t);
 
-    void delete(long id);
+    void deleteById(ObjectId id);
 
+    void deleteAll();
+
+    List<T> findAll();
 }
 

@@ -1,8 +1,9 @@
 package org.nbd.model;
 
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 
-@Document(collection = "client_types")
+//@Document(collection = "client_types")
+@BsonDiscriminator
 public abstract class ClientType extends AbstractEntity {
     public abstract double getDiscount();
 }

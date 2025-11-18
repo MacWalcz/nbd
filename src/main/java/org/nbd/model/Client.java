@@ -2,18 +2,18 @@ package org.nbd.model;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class Client extends User {
+public class Client extends AbstractEntity {
+
     private String firstName;
     private String lastName;
-    private String phoneNumeber;
-    @DBRef(lazy = false)
+    private String phoneNumber;
+    //@DBRef(lazy = false)
     private ClientType clientType;
 
     @Builder.Default
