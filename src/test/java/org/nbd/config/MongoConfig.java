@@ -5,6 +5,8 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
@@ -14,6 +16,7 @@ import java.util.Properties;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
+@Getter
 public class MongoConfig {
 
     private final MongoClient client;
@@ -31,7 +34,6 @@ public class MongoConfig {
         String uri = props.getProperty("mongo.uri");
         String dbName = props.getProperty("mongo.database");
 
-        // ==== POJO CodecRegistry ====
         CodecRegistry pojoCodecRegistry = fromRegistries(
                 MongoClientSettings.getDefaultCodecRegistry(),
                 fromProviders(PojoCodecProvider.builder().automatic(true).build())
@@ -46,11 +48,4 @@ public class MongoConfig {
         database = client.getDatabase(dbName);
     }
 
-    public MongoClient getClient() {
-        return client;
-    }
-
-    public MongoDatabase getDatabase() {
-        return database;
-    }
 }
