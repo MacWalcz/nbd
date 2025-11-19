@@ -23,4 +23,8 @@ public class RedisConfig {
     public static Jedis getConnection() {
         return pool.getResource();
     }
+
+    public static JedisPool getPool() {
+        return pool;
+    }
 }

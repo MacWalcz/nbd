@@ -18,6 +18,7 @@ public class ClientRepo implements RepoManager<Client> {
     public ClientRepo(MongoDatabase database) {
         this.collection = database
                 .getCollection("clients", Client.class);
+
     }
 
     public void save(Client client) {
