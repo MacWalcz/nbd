@@ -4,7 +4,7 @@ services:
     container_name: mongodb1
     hostname: mongodb1
     networks:
-      mongonet:
+      - appnet
     ports:
       - "27017:27017"
     volumes:
@@ -14,10 +14,9 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=admin123
       - MONGO_INITDB_DATABASE=ndb
-    command: --config /etc/mongod.conf --port 27017;
-
+    command: --config /etc/mongod.conf --port 27017
     healthcheck:
-      test: [ "CMD", "mongosh", "--port", "27017",  "--eval", "db.adminCommand('ping')" ]
+      test: ["CMD", "mongosh", "--port", "27017", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -27,7 +26,7 @@ services:
     container_name: mongodb2
     hostname: mongodb2
     networks:
-      mongonet:
+      - appnet
     ports:
       - "27018:27018"
     volumes:
@@ -39,7 +38,7 @@ services:
       - MONGO_INITDB_DATABASE=ndb
     command: --config /etc/mongod.conf --port 27018
     healthcheck:
-      test: [ "CMD", "mongosh","--port","27018", "--eval", "db.adminCommand('ping')" ]
+      test: ["CMD", "mongosh", "--port", "27018", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -49,7 +48,7 @@ services:
     container_name: mongodb3
     hostname: mongodb3
     networks:
-      mongonet:
+      - appnet
     ports:
       - "27019:27019"
     volumes:
@@ -61,7 +60,7 @@ services:
       - MONGO_INITDB_DATABASE=ndb
     command: --config /etc/mongod.conf --port 27019
     healthcheck:
-      test: [ "CMD", "mongosh","--port","27019" ,"--eval", "db.adminCommand('ping')" ]
+      test: ["CMD", "mongosh", "--port", "27019", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -70,7 +69,7 @@ services:
     image: mongo:8.0.1
     container_name: mongoinit
     networks:
-      mongonet:
+      - appnet
     depends_on:
       mongodb1:
         condition: service_healthy
@@ -95,6 +94,16 @@ services:
       );
       '
 
+  redis-stack:
+    image: redis/redis-stack:latest
+    container_name: redis-stack
+    networks:
+      - appnet
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    volumes:
+      - redis-stack-data:/bitnami/redis/data
 
 volumes:
   mongo1_data:
@@ -103,7 +112,8 @@ volumes:
   mongo-configdb-data-2:
   mongo3_data:
   mongo-configdb-data-3:
+  redis-stack-data:
 
 networks:
-  mongonet:
+  appnet:
     driver: bridge

@@ -1,13 +1,14 @@
 package org.nbd.model;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@SuperBuilder
-@AllArgsConstructor
-//@Document(collection = "houses")
+@SuperBuilder(toBuilder = true)
 public class House extends AbstractEntity {
     private String houseNumber;
     private double price;
