@@ -20,9 +20,7 @@ public class RentRepoCacheDecorator implements RepoManager<Rent> {
         this.repo = repo;
     }
 
-    @Override
     public void save(Rent rent) {
-        // проверка пересечений через реальный репозиторий
         List<Rent> overlaps = ((org.nbd.repositories.RentRepo) repo)
                 .findOverlappingReservations(rent.getHouse().getId(), rent.getStartDate(), rent.getEndDate());
 
@@ -32,7 +30,6 @@ public class RentRepoCacheDecorator implements RepoManager<Rent> {
         invalidateCache(rent.getId());
     }
 
-    @Override
     public Rent findById(ObjectId id) {
         try (Jedis jedis = RedisConfig.getConnection()) {
             String json = jedis.get(PREFIX + id.toHexString());
@@ -48,16 +45,12 @@ public class RentRepoCacheDecorator implements RepoManager<Rent> {
         return rent;
     }
 
-    @Override
     public List<Rent> findAll() { return repo.findAll(); }
 
-    @Override
     public void update(ObjectId id, Rent entity) { repo.update(id, entity); invalidateCache(id); }
 
-    @Override
     public void deleteById(ObjectId id) { repo.deleteById(id); invalidateCache(id); }
 
-    @Override
     public void deleteAll() { repo.deleteAll(); }
 
     private void invalidateCache(ObjectId id) {

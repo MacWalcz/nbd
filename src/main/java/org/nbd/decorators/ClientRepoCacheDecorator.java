@@ -18,13 +18,11 @@ public class ClientRepoCacheDecorator implements RepoManager<Client> {
         this.repo = repo;
     }
 
-    @Override
     public void save(Client entity) {
         repo.save(entity);
         invalidateCache(entity.getId());
     }
 
-    @Override
     public Client findById(ObjectId id) {
         try (Jedis jedis = RedisConfig.getConnection()) {
             String key = prefix + id.toHexString();
@@ -35,33 +33,28 @@ public class ClientRepoCacheDecorator implements RepoManager<Client> {
         Client entity = repo.findById(id);
         if (entity != null) {
             try (Jedis jedis = RedisConfig.getConnection()) {
-                jedis.setex(prefix + id.toHexString(), 300, JsonUtil.toJson(entity)); // кеш 5 минут
+                jedis.setex(prefix + id.toHexString(), 300, JsonUtil.toJson(entity));
             } catch (Exception ignored) {}
         }
         return entity;
     }
 
-    @Override
     public List<Client> findAll() {
         return repo.findAll();
     }
 
-    @Override
     public void update(ObjectId id, Client entity) {
         repo.update(id, entity);
         invalidateCache(id);
     }
 
-    @Override
     public void deleteById(ObjectId id) {
         repo.deleteById(id);
         invalidateCache(id);
     }
 
-    @Override
     public void deleteAll() {
         repo.deleteAll();
-        // Можно почистить весь клиентский кэш, если нужно
     }
 
     private void invalidateCache(ObjectId id) {

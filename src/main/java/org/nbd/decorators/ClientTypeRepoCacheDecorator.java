@@ -19,13 +19,11 @@ public class ClientTypeRepoCacheDecorator implements RepoManager<ClientType> {
         this.repo = repo;
     }
 
-    @Override
     public void save(ClientType entity) {
         repo.save(entity);
         invalidateCache(entity.getId());
     }
 
-    @Override
     public ClientType findById(ObjectId id) {
         try (Jedis jedis = RedisConfig.getConnection()) {
             String key = PREFIX + id.toHexString();
@@ -36,15 +34,13 @@ public class ClientTypeRepoCacheDecorator implements RepoManager<ClientType> {
         ClientType entity = repo.findById(id);
         if (entity != null) {
             try (Jedis jedis = RedisConfig.getConnection()) {
-                jedis.setex(PREFIX + entity.getId().toHexString(), 3600, JsonUtil.toJson(entity)); // кеш на 1 час
+                jedis.setex(PREFIX + entity.getId().toHexString(), 3600, JsonUtil.toJson(entity));
             } catch (Exception ignored) {}
         }
         return entity;
     }
 
-    @Override
     public List<ClientType> findAll() {
-        // Для статичных типов клиентов можно кешировать список целиком
         try (Jedis jedis = RedisConfig.getConnection()) {
             String key = PREFIX + "all";
             String json = jedis.get(key);
@@ -58,19 +54,16 @@ public class ClientTypeRepoCacheDecorator implements RepoManager<ClientType> {
         return list;
     }
 
-    @Override
     public void update(ObjectId id, ClientType entity) {
         repo.update(id, entity);
         invalidateCache(id);
     }
 
-    @Override
     public void deleteById(ObjectId id) {
         repo.deleteById(id);
         invalidateCache(id);
     }
 
-    @Override
     public void deleteAll() {
         repo.deleteAll();
         try (Jedis jedis = RedisConfig.getConnection()) {

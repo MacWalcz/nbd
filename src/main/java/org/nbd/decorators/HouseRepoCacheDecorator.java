@@ -18,13 +18,11 @@ public class HouseRepoCacheDecorator implements RepoManager<House> {
         this.repo = repo;
     }
 
-    @Override
     public void save(House entity) {
         repo.save(entity);
         invalidateCache(entity.getId());
     }
 
-    @Override
     public House findById(ObjectId id) {
         try (Jedis jedis = RedisConfig.getConnection()) {
             String key = prefix + id.toHexString();
@@ -35,33 +33,28 @@ public class HouseRepoCacheDecorator implements RepoManager<House> {
         House entity = repo.findById(id);
         if (entity != null) {
             try (Jedis jedis = RedisConfig.getConnection()) {
-                jedis.setex(prefix + id.toHexString(), 300, JsonUtil.toJson(entity)); // кеш 5 минут
+                jedis.setex(prefix + id.toHexString(), 300, JsonUtil.toJson(entity));
             } catch (Exception ignored) {}
         }
         return entity;
     }
 
-    @Override
     public List<House> findAll() {
         return repo.findAll();
     }
 
-    @Override
     public void update(ObjectId id, House entity) {
         repo.update(id, entity);
         invalidateCache(id);
     }
 
-    @Override
     public void deleteById(ObjectId id) {
         repo.deleteById(id);
         invalidateCache(id);
     }
 
-    @Override
     public void deleteAll() {
         repo.deleteAll();
-        // Можно почистить весь кэш домов
     }
 
     private void invalidateCache(ObjectId id) {
