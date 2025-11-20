@@ -35,6 +35,9 @@ public class ClientRepoCacheDecorator implements RepoManager<Client> {
             if (json != null) {
                 return JsonUtil.fromJson(json, Client.class);
             }
+        } catch (Exception e) {
+            Client entity = repo.findById(id);
+            return entity;
         }
 
         Client entity = repo.findById(id);

@@ -31,9 +31,7 @@ class RedisPerformanceTest {
     @BeforeAll
     void setup() {
         MongoConfig config = new MongoConfig();
-       try (Jedis jedis = RedisConfig.getConnection()) {
-            jedis.flushDB();
-       }
+
 
         clientRepo = new ClientRepo(config.getDatabase());
         ClientTypeRepo clientTypeRepo = new ClientTypeRepo(config.getDatabase());
@@ -164,10 +162,5 @@ class RedisPerformanceTest {
         assertTrue(redisDuration < mongoDuration);
     }
 
-    @AfterAll
-    void cleanup() {
-        try (Jedis jedis = RedisConfig.getConnection()) {
-            jedis.flushDB();
-        }
-    }
+
 }

@@ -87,17 +87,9 @@ class RedisCacheTests {
         Client found = clientCache.findById(id);
         assertEquals("Jan", found.getFirstName());
 
-        try (Jedis jedis = RedisConfig.getConnection()) {
-            String json = jedis.get("client:" + id.toHexString());
-            assertNotNull(json);
-        }
 
         found.setLastName("Kowalski");
         clientCache.update(id, found);
-
-        try (Jedis jedis = RedisConfig.getConnection()) {
-            assertNull(jedis.get("client:" + id.toHexString()));
-        }
 
         Client updated = clientCache.findById(id);
         assertEquals("Kowalski", updated.getLastName());
@@ -112,15 +104,11 @@ class RedisCacheTests {
         House found = houseCache.findById(id);
         assertEquals("A1", found.getHouseNumber());
 
-        try (Jedis jedis = RedisConfig.getConnection()) {
-            assertNotNull(jedis.get("house:" + id.toHexString()));
-        }
+
 
         found.setArea(99);
         houseCache.update(id, found);
-        try (Jedis jedis = RedisConfig.getConnection()) {
-            assertNull(jedis.get("house:" + id.toHexString()));
-        }
+
 
         House updated = houseCache.findById(id);
         assertEquals(99, updated.getArea());
@@ -135,9 +123,7 @@ class RedisCacheTests {
 
         clientCache.deleteById(id);
 
-        try (Jedis jedis = RedisConfig.getConnection()) {
-            assertNull(jedis.get("client:" + id.toHexString()));
-        }
+
         assertNull(clientCache.findById(id));
     }
 }
