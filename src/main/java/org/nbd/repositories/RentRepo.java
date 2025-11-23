@@ -1,5 +1,6 @@
 package org.nbd.repositories;
 
+import org.bson.types.ObjectId;
 import org.nbd.exceptions.HouseNotAvaibleException;
 import org.nbd.model.Rent;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -12,12 +13,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface RentRepo extends MongoRepository<Rent, String> {
+public interface RentRepo extends MongoRepository<Rent, ObjectId> {
     @Transactional
     default Rent saveRent(Rent rent) {
         List<Rent> rents = findOverlappingReservations(rent.getHouse().getId(),rent.getStartDate(),rent.getEndDate());
         if (!rents.isEmpty()) {
-            throw new HouseNotAvaibleException("Chata zajęta!");
+            throw new HouseNotAvaibleException(rent.getHouse().getId());
         }
         return save(rent);
     }
@@ -25,14 +26,14 @@ public interface RentRepo extends MongoRepository<Rent, String> {
     @Query("{ 'id': ?0, '$or': [ " +
             "{ 'startDate': { '$lte': ?2 }, 'endDate': { '$gte': ?1 } }, " +
             "{ 'startDate': { '$gte': ?1, '$lte': ?2 } } ] }")
-    List<Rent> findOverlappingReservations(String id, LocalDate startDate, LocalDate endDate);
+    List<Rent> findOverlappingReservations(ObjectId id, LocalDate startDate, LocalDate endDate);
 
-    boolean existsByHouseIdAndEndDateIsNull(String houseId);
+    boolean existsByHouseIdAndEndDateIsNull(ObjectId houseId);
 
-    List<Rent> findByClientIdAndEndDateIsNull(String clientId);
-    List<Rent> findByClientIdAndEndDateIsNotNull(String clientId);
+    List<Rent> findByClientIdAndEndDateIsNull(ObjectId clientId);
+    List<Rent> findByClientIdAndEndDateIsNotNull(ObjectId clientId);
 
-    List<Rent> findByHouseIdAndEndDateIsNull(String houseId);
-    List<Rent> findByHouseIdAndEndDateIsNotNull(String houseId);
+    List<Rent> findByHouseIdAndEndDateIsNull(ObjectId houseId);
+    List<Rent> findByHouseIdAndEndDateIsNotNull(ObjectId houseId);
 
 }

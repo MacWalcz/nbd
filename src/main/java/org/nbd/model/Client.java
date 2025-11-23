@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@Document(collection = "clients")
+
 public class Client extends User {
 
     @DBRef(lazy = false)

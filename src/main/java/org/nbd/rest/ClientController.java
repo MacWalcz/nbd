@@ -3,14 +3,15 @@ package org.nbd.rest;
 import jakarta.validation.Valid;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.nbd.converters.ClientConverter;
 import org.nbd.dto.ClientDTO;
 import org.nbd.model.Client;
-import org.nbd.repositories.ClientRepo;
 import org.nbd.services.ClientService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.nbd.converters.ClientConverter.clientDTOToClient;
 import static org.nbd.converters.ClientConverter.clientToClientDTO;
@@ -23,47 +24,51 @@ public class ClientController {
 
     private final @NonNull ClientService service;
 
-
     @GetMapping("/{id}")
     public ClientDTO getClient(@PathVariable String id) {
-        return clientToClientDTO(service.getClient(id));
+        return clientToClientDTO(service.getClient(new ObjectId(id)));
     }
 
     @PostMapping
     public ClientDTO postClient(@Valid @RequestBody ClientDTO dto) {
-        Client client = clientDTOToClient(dto);
-        Client saved = service.createClient(client);
+        Client saved = service.createClient(clientDTOToClient(dto));
         return clientToClientDTO(saved);
     }
 
     @GetMapping("/by-login/{login}")
-    public Client getExact(@PathVariable String login) {
-        return service.getByLogin(login);
+    public ClientDTO getExact(@PathVariable String login) {
+        return clientToClientDTO(service.getByLogin(login));
     }
 
     @GetMapping("/search")
-    public List<Client> search(@RequestParam String q) {
-        return service.searchByLogin(q);
+    public List<ClientDTO> search(@RequestParam String q) {
+        return service.searchByLogin(q)
+                .stream()
+                .map(ClientConverter::clientToClientDTO)
+                .collect(Collectors.toList());
     }
 
     @GetMapping
-    public List<Client> getAll() {
-        return service.getAll();
+    public List<ClientDTO> getAll() {
+        return service.getAll()
+                .stream()
+                .map(ClientConverter::clientToClientDTO)
+                .collect(Collectors.toList());
     }
 
     @PutMapping("/{id}")
-    public Client update(@PathVariable String id, @Valid @RequestBody ClientDTO dto) {
-        Client client = clientDTOToClient(dto);
-        return service.update(id, client);
+    public ClientDTO update(@PathVariable String id, @Valid @RequestBody ClientDTO dto) {
+        Client updated = service.update(new ObjectId(id), clientDTOToClient(dto));
+        return clientToClientDTO(updated);
     }
 
     @PatchMapping("/{id}/activate")
-    public Client activate(@PathVariable String id) {
-        return service.activate(id);
+    public ClientDTO activate(@PathVariable String id) {
+        return clientToClientDTO(service.activate(new ObjectId(id)));
     }
 
     @PatchMapping("/{id}/deactivate")
-    public Client deactivate(@PathVariable String id) {
-        return service.deactivate(id);
+    public ClientDTO deactivate(@PathVariable String id) {
+        return clientToClientDTO(service.deactivate(new ObjectId(id)));
     }
 }

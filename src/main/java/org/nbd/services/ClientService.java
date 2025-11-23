@@ -2,6 +2,7 @@ package org.nbd.services;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import org.bson.types.ObjectId;
 import org.nbd.dto.ClientDTO;
 import org.nbd.exceptions.HouseNotFoundException;
 import org.nbd.exceptions.LoginAlreadyExists;
@@ -22,7 +23,7 @@ public class ClientService {
 
     private final @NonNull ClientRepo clientRepo;
 
-    public Client getClient(String id) {
+    public Client getClient(ObjectId id) {
         return clientRepo.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
@@ -31,11 +32,7 @@ public class ClientService {
             return clientRepo.save(client);
         } catch (DuplicateKeyException e) {
             throw new LoginAlreadyExists(client.getLogin());
-        } catch (Exception e) {
-            throw new RuntimeException("Wystąpił błąd podczas zapisu użytkownika");
         }
-
-
     }
 
     public Client getByLogin(String login) {
@@ -51,7 +48,7 @@ public class ClientService {
         return clientRepo.findAll();
     }
 
-    public Client update(String id, Client updatedClient) {
+    public Client update(ObjectId id, Client updatedClient) {
         Client client = clientRepo.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
         client.setLogin(updatedClient.getLogin());
@@ -62,14 +59,14 @@ public class ClientService {
         return clientRepo.save(client);
     }
 
-    public Client activate(String id) {
+    public Client activate(ObjectId id) {
         Client client = clientRepo.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
         client.setActive(true);
         return clientRepo.save(client);
     }
 
-    public Client deactivate(String id) {
+    public Client deactivate(ObjectId id) {
         Client client = clientRepo.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
         client.setActive(false);

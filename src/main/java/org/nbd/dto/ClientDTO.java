@@ -1,13 +1,17 @@
 package org.nbd.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.bson.types.ObjectId;
 import org.nbd.model.Client;
 import org.nbd.model.ClientType;
 
 public record ClientDTO(
-    String id,
+        @JsonSerialize(using = ToStringSerializer.class)
+        ObjectId id,
     @NotBlank(message = "Login cannot be blank")
     @Size(min = 3, max = 30, message = "Login must be between 3 and 30 characters")
     String login,

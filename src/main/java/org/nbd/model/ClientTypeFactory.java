@@ -1,5 +1,6 @@
 package org.nbd.model;
 
+import org.bson.types.ObjectId;
 import org.nbd.exceptions.InvalidClientType;
 
 public class ClientTypeFactory {
@@ -8,17 +9,17 @@ public class ClientTypeFactory {
         switch (which) {
             case "1":
                 ct = new Default();
-                ct.setId("1");
+                ct.setId(new ObjectId("000000000000000000000001"));
                 return ct;
 
             case "2":
                 ct = new Premium();
-                ct.setId("2");
+                ct.setId(new ObjectId("000000000000000000000002"));
                 return ct;
 
             case "3":
                 ct = new Luxury();
-                ct.setId("3");
+                ct.setId(new ObjectId("000000000000000000000003"));
                 return new Luxury();
 
             default:

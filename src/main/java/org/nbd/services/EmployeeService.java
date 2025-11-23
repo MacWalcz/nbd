@@ -2,10 +2,13 @@ package org.nbd.services;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import org.bson.types.ObjectId;
+import org.nbd.exceptions.LoginAlreadyExists;
 import org.nbd.exceptions.UserNotFoundException;
 import org.nbd.model.Client;
 import org.nbd.model.Employee;
 import org.nbd.repositories.EmployeeRepo;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +21,17 @@ public class EmployeeService {
 
     private final @NonNull EmployeeRepo employeeRepo;
 
-    public Employee getEmployee(String id) {
+    public Employee getEmployee(ObjectId id) {
         return employeeRepo.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
 
     public Employee createEmployee(Employee employee) {
-        return employeeRepo.save(employee);
+        try {
+            return employeeRepo.save(employee);
+        } catch (DuplicateKeyException e) {
+            throw new LoginAlreadyExists(employee.getLogin());
+        }
     }
 
     public Employee getByLogin(String login) {
@@ -40,7 +47,7 @@ public class EmployeeService {
         return employeeRepo.findAll();
     }
 
-    public Employee update(String id, Employee updatedEmployee) {
+    public Employee update(ObjectId id, Employee updatedEmployee) {
         Employee employee = employeeRepo.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
@@ -52,14 +59,14 @@ public class EmployeeService {
         return employeeRepo.save(employee);
     }
 
-    public Employee activate(String id) {
+    public Employee activate(ObjectId id) {
         Employee employee = employeeRepo.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
         employee.setActive(true);
         return employeeRepo.save(employee);
     }
 
-    public Employee deactivate(String id) {
+    public Employee deactivate(ObjectId id) {
         Employee employee = employeeRepo.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
         employee.setActive(false);

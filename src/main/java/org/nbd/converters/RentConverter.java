@@ -14,8 +14,8 @@ public class RentConverter {
             rent.getId(),
             rent.getStartDate(),
             rent.getEndDate(),
-            rent.getClient(),
-            rent.getHouse(),
+                ClientConverter.clientToClientDTO(rent.getClient()),
+                HouseConverter.houseToHouseDTO(rent.getHouse()),
             rent.getCost()
         );
     }
@@ -26,8 +26,8 @@ public class RentConverter {
                 .id(dto.id())
                 .startDate(dto.startDate())
                 .endDate(dto.endDate())
-                .client(dto.client())
-                .house(dto.house())
+                .client(ClientConverter.clientDTOToClient(dto.clientDTO()))
+                .house(HouseConverter.houseDTOToHouse(dto.houseDTO()))
                 .cost(dto.cost())
                 .build();
     }

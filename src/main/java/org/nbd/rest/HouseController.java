@@ -2,6 +2,7 @@ package org.nbd.rest;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.nbd.converters.HouseConverter;
 import org.nbd.dto.HouseDTO;
 import org.nbd.model.House;
@@ -9,6 +10,7 @@ import org.nbd.services.HouseService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.nbd.converters.HouseConverter.houseDTOToHouse;
 import static org.nbd.converters.HouseConverter.houseToHouseDTO;
@@ -21,10 +23,10 @@ public class HouseController {
 
     private final HouseService service;
 
-
     @GetMapping("/{id}")
     public HouseDTO getHouse(@PathVariable String id) {
-        return houseToHouseDTO(service.getHouse(id));
+        House house = service.getHouse(new ObjectId(id));
+        return houseToHouseDTO(house);
     }
 
     @PostMapping
@@ -35,18 +37,22 @@ public class HouseController {
     }
 
     @GetMapping
-    public List<House> getAll() {
-        return service.getAllHouses();
+    public List<HouseDTO> getAll() {
+        return service.getAllHouses()
+                .stream()
+                .map(HouseConverter::houseToHouseDTO)
+                .collect(Collectors.toList());
     }
 
     @PutMapping("/{id}")
-    public House update(@PathVariable String id, @Valid @RequestBody House house) {
-        return service.updateHouse(id, house);
+    public HouseDTO update(@PathVariable String id, @Valid @RequestBody HouseDTO dto) {
+        House house = houseDTOToHouse(dto);
+        House updated = service.updateHouse(new ObjectId(id), house);
+        return houseToHouseDTO(updated);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable String id) {
-        service.deleteHouse(id);
+        service.deleteHouse(new ObjectId(id));
     }
 }
-

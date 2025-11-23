@@ -9,5 +9,4 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @AllArgsConstructor
 @SuperBuilder
-@Document(collection = "administrators")
 public class Administrator extends User { }

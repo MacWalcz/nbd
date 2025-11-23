@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.FieldType;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @SuperBuilder
 public abstract class AbstractEntity implements Serializable {
     @Id
-    private String id;
+    private ObjectId id;
 
     @Version
     private long version;

@@ -1,6 +1,7 @@
 package org.nbd.services;
 
 import lombok.AllArgsConstructor;
+import org.bson.types.ObjectId;
 import org.nbd.exceptions.HouseActiveRentException;
 import org.nbd.exceptions.HouseNotFoundException;
 import org.nbd.model.House;
@@ -20,7 +21,7 @@ public class HouseService {
     private final HouseRepo houseRepo;
     private final RentRepo rentRepo;
 
-    public House getHouse(String id) {
+    public House getHouse(ObjectId id) {
         return houseRepo.findById(id).orElseThrow(() -> new HouseNotFoundException(id));
     }
 
@@ -32,7 +33,7 @@ public class HouseService {
         return houseRepo.findAll();
     }
 
-    public House updateHouse(String id, House updatedHouse) {
+    public House updateHouse(ObjectId id, House updatedHouse) {
         House house = houseRepo.findById(id)
                 .orElseThrow(() -> new HouseNotFoundException(id));
         house.setHouseNumber(updatedHouse.getHouseNumber());
@@ -42,7 +43,7 @@ public class HouseService {
     }
 
     @Transactional
-    public void deleteHouse(String id) {
+    public void deleteHouse(ObjectId id) {
         House house = houseRepo.findById(id)
                 .orElseThrow(() -> new HouseNotFoundException(id));
 

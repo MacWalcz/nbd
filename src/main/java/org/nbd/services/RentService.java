@@ -2,6 +2,7 @@ package org.nbd.services;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import org.bson.types.ObjectId;
 import org.nbd.exceptions.*;
 import org.nbd.model.Client;
 import org.nbd.model.House;
@@ -25,11 +26,11 @@ public class RentService {
     private final @NonNull ClientRepo clientRepo;
     private final @NonNull HouseRepo houseRepo;
 
-    public Rent getRent(String id) {
+    public Rent getRent(ObjectId id) {
         return rentRepo.findById(id).orElseThrow(() -> new RentNotFoundException(id));
     }
 
-    public Rent createRent(String clientId, String houseId, LocalDate startDate) {
+    public Rent createRent(ObjectId clientId, ObjectId houseId, LocalDate startDate) {
         Client client = clientRepo.findById(clientId)
                 .orElseThrow(() -> new UserNotFoundException(clientId));
         if (!client.isActive()) {
@@ -52,23 +53,23 @@ public class RentService {
         return rentRepo.save(rent);
     }
 
-    public List<Rent> getCurrentRentsForClient(String clientId) {
+    public List<Rent> getCurrentRentsForClient(ObjectId clientId) {
         return rentRepo.findByClientIdAndEndDateIsNull(clientId);
     }
 
-    public List<Rent> getPastRentsForClient(String clientId) {
+    public List<Rent> getPastRentsForClient(ObjectId clientId) {
         return rentRepo.findByClientIdAndEndDateIsNotNull(clientId);
     }
 
-    public List<Rent> getCurrentRentsForHouse(String houseId) {
+    public List<Rent> getCurrentRentsForHouse(ObjectId houseId) {
         return rentRepo.findByHouseIdAndEndDateIsNull(houseId);
     }
 
-    public List<Rent> getPastRentsForHouse(String houseId) {
+    public List<Rent> getPastRentsForHouse(ObjectId houseId) {
         return rentRepo.findByHouseIdAndEndDateIsNotNull(houseId);
     }
 
-    public Rent endRent(String rentId, LocalDate endDate) {
+    public Rent endRent(ObjectId rentId, LocalDate endDate) {
         Rent rent = rentRepo.findById(rentId)
                 .orElseThrow(() -> new RentNotFoundException(rentId));
         rent.endRent(endDate);
@@ -76,7 +77,7 @@ public class RentService {
     }
 
     @Transactional
-    public void deleteActiveRent(String rentId) {
+    public void deleteActiveRent(ObjectId rentId) {
         Rent rent = rentRepo.findById(rentId)
                 .orElseThrow(() -> new RentNotFoundException(rentId));
         if (!rent.isActive()) {
