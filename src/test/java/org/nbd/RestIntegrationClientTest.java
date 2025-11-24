@@ -15,7 +15,7 @@ public class RestIntegrationClientTest {
     static void setup() {
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = 8080;
-        RestAssured.basePath = "/clients";
+        RestAssured.basePath = "/users/clients";
     }
 
     @Test
