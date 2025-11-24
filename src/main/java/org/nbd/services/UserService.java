@@ -61,13 +61,13 @@ public class UserService {
 
 
     public User activate(ObjectId id) {
-        User user = getUser(id);
+        User user = userRepo.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         user.setActive(true);
         return userRepo.save(user);
     }
 
     public User deactivate(ObjectId id) {
-        User user = getUser(id);
+        User user = userRepo.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         user.setActive(false);
         return userRepo.save(user);
     }
