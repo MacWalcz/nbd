@@ -26,8 +26,8 @@ public class RentConverter {
                 .id(dto.id())
                 .startDate(dto.startDate())
                 .endDate(dto.endDate())
-                .client(ClientConverter.clientDTOToClient(dto.clientDTO()))
-                .house(HouseConverter.houseDTOToHouse(dto.houseDTO()))
+                .client(ClientConverter.clientDTOToClient(dto.client()))
+                .house(HouseConverter.houseDTOToHouse(dto.house()))
                 .cost(dto.cost())
                 .build();
     }

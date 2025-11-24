@@ -50,7 +50,8 @@ public class RestIntegrationRentTest {
                 .extract()
                 .path("id");
 
-        RestAssured.basePath = "/clients";
+        RestAssured.basePath = "/users/clients";
+
         String clientId = given()
                 .contentType(ContentType.JSON)
                 .body(clientJson)
@@ -69,6 +70,7 @@ public class RestIntegrationRentTest {
 
 
         RestAssured.basePath = "/rents";
+        System.out.println(clientId);
         given()
                 .contentType(ContentType.JSON)
                 .queryParam("client", clientId)
@@ -124,7 +126,7 @@ public class RestIntegrationRentTest {
                 .extract()
                 .path("id");
 
-        RestAssured.basePath = "/clients";
+        RestAssured.basePath = "/users/clients";
 
         String client1Id = given()
                 .contentType(ContentType.JSON)
