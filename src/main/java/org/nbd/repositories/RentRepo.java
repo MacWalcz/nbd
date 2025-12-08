@@ -7,6 +7,7 @@ import jakarta.inject.Inject;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.nbd.exceptions.HouseNotAvaibleException;
+import org.nbd.model.House;
 import org.nbd.model.Rent;
 
 import java.time.LocalDate;
@@ -21,9 +22,8 @@ public class RentRepo implements RepoManager<Rent> {
     private final MongoDatabase database;
     private final MongoCollection<Rent> collection;
 
-    // 1. 🛠️ ДОБАВЛЕН КОНСТРУКТОР БЕЗ АРГУМЕНТОВ ДЛЯ CDI (WELD-001435)
     public RentRepo() {
-        this.database = null; // Инициализируем final поля нулями
+        this.database = null;
         this.collection = null;
     }
 
@@ -36,7 +36,7 @@ public class RentRepo implements RepoManager<Rent> {
     public Rent save(Rent rent) {
 
         List<Rent> overlaps = findOverlappingReservations(
-                rent.getHouse().getId(),
+                rent.getHouse(),
                 rent.getStartDate(),
                 rent.getEndDate()
         );
@@ -50,12 +50,8 @@ public class RentRepo implements RepoManager<Rent> {
     }
 
 
-    public List<Rent> findOverlappingReservations(ObjectId houseId, LocalDate start, LocalDate end) {
+    public List<Rent> findOverlappingReservations(House houseId, LocalDate start, LocalDate end) {
 
-        // MongoDB-запрос:
-        // house._id == houseId
-        // AND startDate <= end (дата окончания нового рента)
-        // AND endDate >= start (дата начала нового рента)
         Document filter = new Document()
                 .append("house._id", houseId)
                 .append("startDate", new Document("$lte", end))
@@ -80,6 +76,7 @@ public class RentRepo implements RepoManager<Rent> {
     }
 
     public void update(ObjectId id, Rent updated) {
+        updated.setId(id);
         collection.replaceOne(eq("_id", id), updated);
     }
 

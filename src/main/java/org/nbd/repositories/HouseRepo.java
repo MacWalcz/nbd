@@ -15,7 +15,7 @@ import static com.mongodb.client.model.Filters.eq;
 @ApplicationScoped
 public class HouseRepo extends BaseRepo<House> implements RepoManager<House> {
 
-    // Конструктор по умолчанию (public), необходимый для проксирования CDI
+
     public HouseRepo() {
         super();
     }
@@ -39,6 +39,7 @@ public class HouseRepo extends BaseRepo<House> implements RepoManager<House> {
     }
 
     public void update(ObjectId id, House updated) {
+        updated.setId(id);
         collection.replaceOne(eq("_id", id), updated);
     }
 

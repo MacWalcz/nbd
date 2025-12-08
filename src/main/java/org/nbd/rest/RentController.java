@@ -37,7 +37,7 @@ public class RentController {
                           @QueryParam("house") String house,
                           @QueryParam("startTime") String startTime) {
         LocalDate startDate = LocalDate.parse(startTime);
-        Rent rent = service.createRent(new ObjectId(client), new ObjectId(house), startDate);
+        Rent rent = service.createRent(new ObjectId(client),new ObjectId( house), startDate);
         return rentToRentDTO(rent);
     }
 
@@ -81,7 +81,7 @@ public class RentController {
     @Path("/{id}/end")
     public RentDTO endRent(@PathParam("id") String id, @QueryParam("endTime") String endTime) {
         LocalDate endDate = LocalDate.parse(endTime);
-        Rent rent = service.endRent(new ObjectId(id), endDate);
+        Rent rent = service.endRent(new ObjectId(id) , endDate);
         return rentToRentDTO(rent);
     }
 

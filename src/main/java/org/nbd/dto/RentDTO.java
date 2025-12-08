@@ -10,7 +10,7 @@ import java.time.LocalDate;
 public class RentDTO {
 
     @JsonSerialize(using = ToStringSerializer.class)
-    private ObjectId id;
+    private String id;
 
     @NotNull(message = "Must not be null")
     private LocalDate startDate;
@@ -27,7 +27,7 @@ public class RentDTO {
 
     public RentDTO() {}
 
-    public RentDTO(ObjectId id, LocalDate startDate, LocalDate endDate,
+    public RentDTO(String id, LocalDate startDate, LocalDate endDate,
                    ClientDTO client, HouseDTO house, Double cost) {
         this.id = id;
         this.startDate = startDate;
@@ -37,8 +37,8 @@ public class RentDTO {
         this.cost = cost;
     }
 
-    public ObjectId getId() { return id; }
-    public void setId(ObjectId id) { this.id = id; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public LocalDate getStartDate() { return startDate; }
     public void setStartDate(LocalDate startDate) { this.startDate = startDate; }

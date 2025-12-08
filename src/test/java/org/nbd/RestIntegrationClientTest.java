@@ -13,7 +13,7 @@ public class RestIntegrationClientTest {
 
     @BeforeAll
     static void setup() {
-        RestAssured.baseURI = "http://localhost";
+        RestAssured.baseURI = "http://localhost/nbd/rest";
         RestAssured.port = 8080;
         RestAssured.basePath = "/users/clients";
     }
@@ -26,11 +26,11 @@ public class RestIntegrationClientTest {
                 "login": "%s",
                 "firstName": "Jan",
                 "lastName": "Kowalski",
-                "phoneNumber": "555555555",
-                "clientType": 1
+                "phoneNumber": "555555555"
             }
             """,login);
 
+        System.out.println(login);
         given()
                 .contentType(ContentType.JSON)
                 .body(json)
@@ -51,9 +51,7 @@ public class RestIntegrationClientTest {
                 "login": "%s",
                 "firstName": "Anna",
                 "lastName": "Nowak",
-                "phoneNumber": "555555556",
-                "active": true,
-                "clientType": 1
+                "phoneNumber": "555555556"
             }
             """,login);
 
@@ -85,9 +83,7 @@ public class RestIntegrationClientTest {
                 "login": "%s",
                 "firstName": "Piotr",
                 "lastName": "Zielinski",
-                "phoneNumber": "555555557",
-                "active": true,
-                "clientType": 1
+                "phoneNumber": "555555557"
             }
             """,login);
 
@@ -106,9 +102,7 @@ public class RestIntegrationClientTest {
                 "login": "%s",
                 "firstName": "Piotr",
                 "lastName": "Kowalski",
-                "phoneNumber": "555555557",
-                "active": false,
-                "clientType": 1
+                "phoneNumber": "555555557"
             }
             """,login);
 
@@ -133,8 +127,7 @@ public class RestIntegrationClientTest {
                 "login": "ab",
                 "firstName": "Jan",
                 "lastName": "Kowalski",
-                "phoneNumber": "555555558",
-                "clientType": 1
+                "phoneNumber": "555555558"
             }
             """;
 
@@ -155,8 +148,7 @@ public class RestIntegrationClientTest {
                 "login": "%s",
                 "firstName": "Adam",
                 "lastName": "Nowak",
-                "phoneNumber": "555555559",
-                 "clientType": 1
+                "phoneNumber": "555555559"
             }
             """,login);
 

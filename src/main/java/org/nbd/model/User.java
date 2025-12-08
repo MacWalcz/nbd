@@ -10,6 +10,8 @@ import org.bson.types.ObjectId;
 @SuperBuilder
 @Data
 public abstract class User extends AbstractEntity {
+
+
     private String login;
     private String firstName;
     private String lastName;

@@ -1,5 +1,6 @@
 package org.nbd.converters;
 
+import org.bson.types.ObjectId;
 import org.nbd.dto.EmployeeDTO;
 import org.nbd.model.Employee;
 
@@ -7,7 +8,7 @@ public class EmployeeConverter {
 
     public static EmployeeDTO employeeToEmployeeDTO(Employee employee) {
         return new EmployeeDTO(
-                employee.getId(),
+                employee.getId().toHexString(),
                 employee.getLogin(),
                 employee.getFirstName(),
                 employee.getLastName(),
@@ -18,12 +19,11 @@ public class EmployeeConverter {
 
     public static Employee employeeDTOToEmployee(EmployeeDTO dto) {
         return Employee.builder()
-                .id(dto.getId())
+                .id(dto.getId() != null && !dto.getId().isBlank() ? new ObjectId(dto.getId()) : null)
                 .login(dto.getLogin())
                 .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
                 .phoneNumber(dto.getPhoneNumber())
-                .active(dto.getActive())
                 .build();
     }
 }

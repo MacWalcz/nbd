@@ -6,7 +6,7 @@ import org.bson.types.ObjectId;
 public class ObjectIdAdapter implements JsonbAdapter<ObjectId, String> {
 
     @Override
-    public String adaptToJson(ObjectId objectId) {
+    public  String adaptToJson(ObjectId objectId) {
         return objectId != null ? objectId.toHexString() : null;
     }
 

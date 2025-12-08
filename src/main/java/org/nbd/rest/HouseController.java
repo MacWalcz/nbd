@@ -52,7 +52,7 @@ public class HouseController {
     @Path("/{id}")
     public HouseDTO update(@PathParam("id") String id, @Valid HouseDTO dto) {
         House house = houseDTOToHouse(dto);
-        House updated = service.updateHouse(new ObjectId(id), house);
+        House updated = service.updateHouse(new ObjectId(id) , house);
         return houseToHouseDTO(updated);
     }
 

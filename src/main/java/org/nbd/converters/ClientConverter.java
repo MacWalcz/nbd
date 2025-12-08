@@ -1,5 +1,6 @@
 package org.nbd.converters;
 
+import org.bson.types.ObjectId;
 import org.nbd.dto.ClientDTO;
 import org.nbd.model.Client;
 
@@ -11,7 +12,7 @@ public class ClientConverter {
 
     public static ClientDTO clientToClientDTO(Client client) {
         return new ClientDTO(
-                client.getId(),
+                client.getId().toHexString(),
                 client.getLogin(),
                 client.getFirstName(),
                 client.getLastName(),
@@ -22,12 +23,11 @@ public class ClientConverter {
 
     public static Client clientDTOToClient(ClientDTO dto) {
         return Client.builder()
-                .id(dto.getId())
+                .id(dto.getId() != null && !dto.getId().isBlank() ? new ObjectId(dto.getId()) : null)
                 .login(dto.getLogin())
                 .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
                 .phoneNumber(dto.getPhoneNumber())
-                .active(dto.getActive())
                 .build();
     }
 

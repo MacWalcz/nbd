@@ -5,9 +5,9 @@ import jakarta.ws.rs.core.Response;
 
 public class UserNotFoundException extends AppBaseException {
     public UserNotFoundException(ObjectId id) {
-        super(Response.Status.NOT_FOUND, "Client with id " + id + " not found");
+        super(Response.Status.NOT_FOUND, "Client " + id + " not found");
     }
     public UserNotFoundException(String login) {
-        super(Response.Status.NOT_FOUND, "Client with login " + login + " not found");
+        super(Response.Status.NOT_FOUND, "Client " + login + " not found");
     }
 }

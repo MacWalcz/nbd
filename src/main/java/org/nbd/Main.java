@@ -5,9 +5,8 @@ import fish.payara.micro.PayaraMicro;
 public class Main {
     public static void main(String[] args) {
         try {
-            // Деплой WAR
             PayaraMicro.getInstance()
-                    .addDeployment("target/nbd.war") // путь к сгенерированному WAR
+                    .addDeployment("target/nbd.war")
                     .bootStrap();
             System.out.println("Payara Micro запущен на http://localhost:8080/nbd");
         } catch (Exception e) {

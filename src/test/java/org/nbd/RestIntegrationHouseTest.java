@@ -12,7 +12,7 @@ public class RestIntegrationHouseTest {
 
     @BeforeAll
     static void setup() {
-        RestAssured.baseURI = "http://localhost";
+        RestAssured.baseURI = "http://localhost/nbd/rest";
         RestAssured.port = 8080;
         RestAssured.basePath = "/houses";
     }
@@ -76,7 +76,7 @@ public class RestIntegrationHouseTest {
                 }
                 """;
 
-        String clientId = given()
+        String houseId = given()
                 .contentType(ContentType.JSON)
                 .body(json)
                 .when()
@@ -85,7 +85,7 @@ public class RestIntegrationHouseTest {
                 .extract()
                 .path("id");
 
-
+        System.out.println(houseId);
         String updateJson = """
                 {
                       "houseNumber": "A14",
@@ -97,7 +97,7 @@ public class RestIntegrationHouseTest {
         given()
                 .contentType(ContentType.JSON)
                 .body(updateJson)
-                .pathParam("id", clientId)
+                .pathParam("id", houseId)
                 .when()
                 .put("/{id}")
                 .then()

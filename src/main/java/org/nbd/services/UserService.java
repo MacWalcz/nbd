@@ -72,7 +72,8 @@ public class UserService {
         return userRepo.save(user);
     }
 
-    // --- Клиенты ---
+
+
     public Client getClient(ObjectId id) {
         User user = getUser(id);
         if (user instanceof Client c) return c;
@@ -100,7 +101,6 @@ public class UserService {
         return updateUser(id, updated);
     }
 
-    // --- Работники ---
     public Employee getEmployee(ObjectId id) {
         User user = getUser(id);
         if (user instanceof Employee e) return e;
@@ -128,7 +128,6 @@ public class UserService {
         return updateUser(id, updated);
     }
 
-    // --- Администраторы ---
     public Administrator getAdministrator(ObjectId id) {
         User user = getUser(id);
         if (user instanceof Administrator a) return a;

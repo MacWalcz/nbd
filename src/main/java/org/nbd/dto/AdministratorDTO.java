@@ -8,7 +8,7 @@ import org.bson.types.ObjectId;
 public class AdministratorDTO {
 
     @JsonSerialize(using = ToStringSerializer.class)
-    private ObjectId id;
+    private String id;
 
     @NotBlank(message = "Login cannot be blank")
     @Size(min = 3, max = 30, message = "Login must be between 3 and 30 characters")
@@ -27,7 +27,7 @@ public class AdministratorDTO {
 
     public AdministratorDTO() {}
 
-    public AdministratorDTO(ObjectId id, String login, String firstName, String lastName,
+    public AdministratorDTO(String id, String login, String firstName, String lastName,
                             String phoneNumber, Boolean active) {
         this.id = id;
         this.login = login;
@@ -37,8 +37,8 @@ public class AdministratorDTO {
         this.active = active;
     }
 
-    public ObjectId getId() { return id; }
-    public void setId(ObjectId id) { this.id = id; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public String getLogin() { return login; }
     public void setLogin(String login) { this.login = login; }

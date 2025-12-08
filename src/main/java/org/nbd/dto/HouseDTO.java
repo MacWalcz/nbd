@@ -8,7 +8,7 @@ import org.bson.types.ObjectId;
 public class HouseDTO {
 
     @JsonSerialize(using = ToStringSerializer.class)
-    private ObjectId id;
+    private String id;
 
     @NotBlank(message = "Must not be blank")
     private String houseNumber;
@@ -23,15 +23,15 @@ public class HouseDTO {
 
     public HouseDTO() {}
 
-    public HouseDTO(ObjectId id, String houseNumber, Double price, Double area) {
+    public HouseDTO(String id, String houseNumber, Double price, Double area) {
         this.id = id;
         this.houseNumber = houseNumber;
         this.price = price;
         this.area = area;
     }
 
-    public ObjectId getId() { return id; }
-    public void setId(ObjectId id) { this.id = id; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public String getHouseNumber() { return houseNumber; }
     public void setHouseNumber(String houseNumber) { this.houseNumber = houseNumber; }

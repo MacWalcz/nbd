@@ -3,6 +3,7 @@ package org.nbd.model;
 import jakarta.json.bind.annotation.JsonbProperty;
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.json.bind.annotation.JsonbTypeAdapter;
+import jakarta.persistence.Id;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonId;
@@ -16,19 +17,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @SuperBuilder
 public abstract class AbstractEntity implements Serializable {
-    @BsonId                     // dla MongoDB
-    @JsonbTransient                // ukrywamy oryginalne pole ObjectId
+    @BsonId
     private ObjectId id;
-
-    // to pole będzie widoczne w JSON-ie jako czysty string
-    @JsonbProperty("_id")
-    public String getId() {
-        return id != null ? id.toHexString() : null;
-    }
-
-    public void setId(String id) {
-        this.id = id != null ? new ObjectId(id) : null;
-    }
 
     private long version;
 }

@@ -21,12 +21,11 @@ public class UserController {
     @Inject
     private UserService service;
 
-// --- CLIENTS ---
 
     @GET
     @Path("/clients/{id}")
     public ClientDTO getClient(@PathParam("id") String id) {
-        return ClientConverter.clientToClientDTO(service.getClient(new ObjectId(id)));
+        return ClientConverter.clientToClientDTO(service.getClient(new ObjectId(id) ));
     }
 
     @POST
@@ -79,7 +78,6 @@ public class UserController {
         return ClientConverter.clientToClientDTO((Client) service.deactivate(new ObjectId(id)));
     }
 
-// --- EMPLOYEES ---
 
     @GET
     @Path("/employees/{id}")
@@ -137,7 +135,6 @@ public class UserController {
         return EmployeeConverter.employeeToEmployeeDTO((Employee) service.deactivate(new ObjectId(id)));
     }
 
-// --- ADMINISTRATORS ---
 
     @GET
     @Path("/administrators/{id}")

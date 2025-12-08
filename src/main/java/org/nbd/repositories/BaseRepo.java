@@ -13,7 +13,6 @@ public abstract class BaseRepo<T> {
     protected final Class<T> clazz;
     protected final String collectionName;
 
-    // Конструктор по умолчанию (protected), необходимый для проксирования CDI
     protected BaseRepo() {
         this.database = null;
         this.collection = null;

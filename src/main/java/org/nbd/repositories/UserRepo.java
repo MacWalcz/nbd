@@ -1,7 +1,11 @@
 package org.nbd.repositories;
 
+import com.mongodb.MongoCommandException;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.Indexes;
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
@@ -13,7 +17,6 @@ import java.util.List;
 @ApplicationScoped
 public class UserRepo extends BaseRepo<User> implements RepoManager<User> {
 
-    // Конструктор по умолчанию (public), необходимый для проксирования CDI
     public UserRepo() {
         super();
     }
@@ -21,6 +24,23 @@ public class UserRepo extends BaseRepo<User> implements RepoManager<User> {
     @Inject
     public UserRepo(MongoDatabase database) {
         super(database);
+    }
+
+    @PostConstruct
+    public void init() {
+
+        try {
+
+            collection.createIndex(Indexes.ascending("login"),
+                    new IndexOptions().unique(true));
+            System.out.println("Utworzono unikalny indeks dla pola 'login' w UserRepo.");
+        } catch (MongoCommandException e) {
+
+            if (!e.getErrorCodeName().equals("IndexKeySpecsConflict") && !e.getErrorCodeName().equals("IndexAlreadyExists")) {
+                throw e;
+
+            }
+        }
     }
 
     @Override
@@ -36,6 +56,7 @@ public class UserRepo extends BaseRepo<User> implements RepoManager<User> {
 
     @Override
     public void update(ObjectId id, User updated) {
+        updated.setId(id);
         collection.replaceOne(Filters.eq("_id", id), updated);
     }
 
@@ -105,7 +126,7 @@ public class UserRepo extends BaseRepo<User> implements RepoManager<User> {
         List<User> result = new ArrayList<>();
         String lowerPartial = partial.toLowerCase();
 
-        List<User> allUsers = findAll(); // использует findAdministrators(), findEmployees(), findClients()
+        List<User> allUsers = findAll();
         for (User u : allUsers) {
             if (u.getLogin() != null && u.getLogin().toLowerCase().contains(lowerPartial)) {
                 result.add(u);

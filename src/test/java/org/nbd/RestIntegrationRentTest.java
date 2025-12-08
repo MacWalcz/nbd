@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.*;
 public class RestIntegrationRentTest {
     @BeforeAll
     static void setup() {
-        RestAssured.baseURI = "http://localhost";
+        RestAssured.baseURI = "http://localhost/nbd/rest";
         RestAssured.port = 8080;
 
     }
@@ -35,8 +35,8 @@ public class RestIntegrationRentTest {
                     "login": "%s",
                     "firstName": "Kamil",
                     "lastName": "Kowal",
-                    "phoneNumber": "555555556",
-                    "clientType": 1
+                    "phoneNumber": "555555556"
+
                 }
                 """, login);
         RestAssured.basePath = "/houses";
@@ -101,8 +101,8 @@ public class RestIntegrationRentTest {
                     "login": "%s",
                     "firstName": "Kamil",
                     "lastName": "Kowal",
-                    "phoneNumber": "555555556",
-                    "clientType": 1
+                    "phoneNumber": "555555556"
+
                 }
                 """, login);
         login = RandomStringUtils.randomAlphanumeric(3, 31);
@@ -111,8 +111,8 @@ public class RestIntegrationRentTest {
                     "login": "%s",
                     "firstName": "Kowal",
                     "lastName": "Kamil",
-                    "phoneNumber": "555555556",
-                    "clientType": 1
+                    "phoneNumber": "555555556"
+
                 }
                 """, login);
         RestAssured.basePath = "/houses";
