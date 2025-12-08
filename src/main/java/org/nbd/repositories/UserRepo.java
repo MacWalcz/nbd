@@ -51,7 +51,11 @@ public class UserRepo extends BaseRepo<User> implements RepoManager<User> {
 
     @Override
     public List<User> findAll() {
-        return collection.find().into(new ArrayList<>());
+        List<User> users = new ArrayList<>();
+        users.addAll(findAdministrators());
+        users.addAll(findEmployees());
+        users.addAll(findClients());
+        return users;
     }
 
     public User findByLogin(String login) {
@@ -63,10 +67,18 @@ public class UserRepo extends BaseRepo<User> implements RepoManager<User> {
     }
 
     public List<User> findByLoginPartial(String partial) {
-        return collection
-                .find(Filters.regex("login", partial, "i"))
-                .into(new ArrayList<>());
+        List<User> result = new ArrayList<>();
+        String lowerPartial = partial.toLowerCase();
+
+        for (User u : findAll()) {
+            if (u.getLogin() != null && u.getLogin().toLowerCase().contains(lowerPartial)) {
+                result.add(u);
+            }
+        }
+
+        return result;
     }
+
 
     public List<Administrator> findAdministrators() {
         return database
@@ -93,7 +105,8 @@ public class UserRepo extends BaseRepo<User> implements RepoManager<User> {
         List<User> result = new ArrayList<>();
         String lowerPartial = partial.toLowerCase();
 
-        for (User u : collection.find()) {
+        List<User> allUsers = findAll(); // использует findAdministrators(), findEmployees(), findClients()
+        for (User u : allUsers) {
             if (u.getLogin() != null && u.getLogin().toLowerCase().contains(lowerPartial)) {
                 result.add(u);
             }
@@ -101,4 +114,5 @@ public class UserRepo extends BaseRepo<User> implements RepoManager<User> {
 
         return result;
     }
+
 }

@@ -1,6 +1,5 @@
 package org.nbd.converters;
 
-import lombok.RequiredArgsConstructor;
 import org.nbd.dto.EmployeeDTO;
 import org.nbd.model.Employee;
 
@@ -18,15 +17,13 @@ public class EmployeeConverter {
     }
 
     public static Employee employeeDTOToEmployee(EmployeeDTO dto) {
-
         return Employee.builder()
-                .id(dto.id())
-                .login(dto.login())
-                .firstName(dto.firstName())
-                .lastName(dto.lastName())
-                .phoneNumber(dto.phoneNumber())
-                .active(dto.active())
+                .id(dto.getId())
+                .login(dto.getLogin())
+                .firstName(dto.getFirstName())
+                .lastName(dto.getLastName())
+                .phoneNumber(dto.getPhoneNumber())
+                .active(dto.getActive())
                 .build();
     }
 }
-

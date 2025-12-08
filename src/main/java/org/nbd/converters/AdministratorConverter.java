@@ -1,9 +1,7 @@
 package org.nbd.converters;
 
-import lombok.RequiredArgsConstructor;
 import org.nbd.dto.AdministratorDTO;
 import org.nbd.model.Administrator;
-
 
 public class AdministratorConverter {
 
@@ -20,12 +18,12 @@ public class AdministratorConverter {
 
     public static Administrator administratorDTOToAdministrator(AdministratorDTO dto) {
         return Administrator.builder()
-                .id(dto.id())
-                .login(dto.login())
-                .firstName(dto.firstName())
-                .lastName(dto.lastName())
-                .phoneNumber(dto.phoneNumber())
-                .active(dto.active())
+                .id(dto.getId())
+                .login(dto.getLogin())
+                .firstName(dto.getFirstName())
+                .lastName(dto.getLastName())
+                .phoneNumber(dto.getPhoneNumber())
+                .active(dto.getActive())
                 .build();
     }
 }

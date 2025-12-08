@@ -1,38 +1,41 @@
 package org.nbd.converters;
 
 import org.nbd.dto.ClientDTO;
-import org.nbd.model.*;
+import org.nbd.model.Client;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ClientConverter {
 
-    public ClientConverter() {
-    }
-
     public static ClientDTO clientToClientDTO(Client client) {
-        return new ClientDTO(client.getId(), client.getLogin(), client.getFirstName(), client.getLastName(), client.getPhoneNumber(),client.isActive());
+        return new ClientDTO(
+                client.getId(),
+                client.getLogin(),
+                client.getFirstName(),
+                client.getLastName(),
+                client.getPhoneNumber(),
+                client.isActive()
+        );
     }
 
-    public static Client clientDTOToClient(ClientDTO clientDTO)  {
-
-            return Client.builder()
-                    .id(clientDTO.id())
-                    .login(clientDTO.login())
-                    .firstName(clientDTO.firstName())
-                    .lastName(clientDTO.lastName())
-                    .phoneNumber(clientDTO.phoneNumber())
-                    .build();
-
-
+    public static Client clientDTOToClient(ClientDTO dto) {
+        return Client.builder()
+                .id(dto.getId())
+                .login(dto.getLogin())
+                .firstName(dto.getFirstName())
+                .lastName(dto.getLastName())
+                .phoneNumber(dto.getPhoneNumber())
+                .active(dto.getActive())
+                .build();
     }
 
     public static List<ClientDTO> clientsToClientDTOs(List<Client> clients) {
-        return null == clients ? null : (List)clients.stream().filter(Objects::nonNull).map(ClientConverter::clientToClientDTO).collect(Collectors.toList());
+        return clients == null ? null :
+                clients.stream()
+                        .filter(Objects::nonNull)
+                        .map(ClientConverter::clientToClientDTO)
+                        .collect(Collectors.toList());
     }
-
-
 }
