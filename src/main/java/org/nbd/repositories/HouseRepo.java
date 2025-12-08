@@ -1,13 +1,10 @@
 package org.nbd.repositories;
 
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import lombok.NoArgsConstructor;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.nbd.model.Client;
 import org.nbd.model.House;
 
 import java.util.ArrayList;
@@ -16,15 +13,16 @@ import java.util.List;
 import static com.mongodb.client.model.Filters.eq;
 
 @ApplicationScoped
-public class HouseRepo implements RepoManager<House> {
+public class HouseRepo extends BaseRepo<House> implements RepoManager<House> {
 
-    private MongoCollection<House> collection;
-
-    public HouseRepo() {}
+    // Конструктор по умолчанию (public), необходимый для проксирования CDI
+    public HouseRepo() {
+        super();
+    }
 
     @Inject
-    public HouseRepo(MongoDatabase db) {
-        this.collection = db.getCollection("houses", House.class);
+    public HouseRepo(MongoDatabase database) {
+        super(database);
     }
 
     public House save(House house) {
@@ -37,11 +35,7 @@ public class HouseRepo implements RepoManager<House> {
     }
 
     public List<House> findAll() {
-        List<House> list = new ArrayList<>();
-        for (House h : collection.find()) {
-            list.add(h);
-        }
-        return list;
+        return collection.find().into(new ArrayList<>());
     }
 
     public void update(ObjectId id, House updated) {

@@ -1,27 +1,35 @@
 package org.nbd.init;
 
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
+import jakarta.enterprise.context.ApplicationScoped; // Используем CDI Scope
+import jakarta.inject.Inject; // Используем CDI Inject
 import org.bson.types.ObjectId;
 import org.nbd.model.*;
-import org.nbd.repositories.ClientRepo;
 import org.nbd.repositories.HouseRepo;
 import org.nbd.repositories.RentRepo;
-
+import org.nbd.repositories.UserRepo; // Используем UserRepo для Client
 
 import java.time.LocalDate;
 
-@RequiredArgsConstructor
+@ApplicationScoped // Делаем класс управляемым CDI бином
 public class DataInit {
 
-    private final ClientRepo clientRepo;
-    private final HouseRepo houseRepo;
-    private final RentRepo rentRepo;
+    // --- Замена RequiredArgsConstructor на @Inject ---
+    // Удаляем ClientRepo, используем UserRepo
+    @Inject
+    private UserRepo userRepo;
+
+    @Inject
+    private HouseRepo houseRepo;
+
+    @Inject
+    private RentRepo rentRepo;
 
     @PostConstruct
     public void init() {
+        System.out.println("Initializing data...");
 
-        // --- Clients ---
+        // --- Clients (Теперь сохраняются через UserRepo) ---
         Client c1 = Client.builder()
                 .id(new ObjectId("111111111111111111111111"))
                 .login("klient1")
@@ -30,7 +38,7 @@ public class DataInit {
                 .phoneNumber("789789789")
                 .active(true)
                 .build();
-        insertClientIfNotExists(c1, "Client 1");
+        insertUserIfNotExists(c1, "Client 1");
 
         Client c2 = Client.builder()
                 .id(new ObjectId("222222222222222222222222"))
@@ -40,7 +48,7 @@ public class DataInit {
                 .phoneNumber("123123456")
                 .active(false)
                 .build();
-        insertClientIfNotExists(c2, "Client 2");
+        insertUserIfNotExists(c2, "Client 2");
 
         Client c3 = Client.builder()
                 .id(new ObjectId("333333333333333333333333"))
@@ -50,9 +58,9 @@ public class DataInit {
                 .phoneNumber("555555555")
                 .active(true)
                 .build();
-        insertClientIfNotExists(c3, "Client 3");
+        insertUserIfNotExists(c3, "Client 3");
 
-        // --- Houses ---
+        // --- Houses (Без изменений) ---
         House h1 = House.builder()
                 .id(new ObjectId("444444444444444444444444"))
                 .houseNumber("A89")
@@ -77,19 +85,27 @@ public class DataInit {
                 .build();
         insertHouseIfNotExists(h3, "House 3");
 
-        // --- Rents ---
+        // --- Rents (Используем userRepo для поиска клиента) ---
+        // Ищем клиента через UserRepo, который возвращает User (Client)
+        Client foundC1 = (Client) userRepo.findById(new ObjectId("111111111111111111111111"));
+        Client foundC3 = (Client) userRepo.findById(new ObjectId("333333333333333333333333"));
+        Client foundC2 = (Client) userRepo.findById(new ObjectId("222222222222222222222222"));
+
+
         Rent pastRent = Rent.builder()
                 .id(new ObjectId("777777777777777777777777"))
-                .client(clientRepo.findById(new ObjectId("111111111111111111111111")))
+                .client(foundC1) // Используем найденный User/Client
                 .house(h1)
                 .startDate(LocalDate.of(2025, 10, 1))
                 .build();
-        pastRent.endRent(LocalDate.of(2025, 10, 5));
+        if (pastRent.getEndDate() == null) {
+            pastRent.endRent(LocalDate.of(2025, 10, 5));
+        }
         insertRentIfNotExists(pastRent, "Rent 1");
 
         Rent currentRent = Rent.builder()
                 .id(new ObjectId("888888888888888888888888"))
-                .client(clientRepo.findById(new ObjectId("333333333333333333333333")))
+                .client(foundC3)
                 .house(h2)
                 .startDate(LocalDate.of(2025, 11, 10))
                 .build();
@@ -97,20 +113,24 @@ public class DataInit {
 
         Rent futureRent = Rent.builder()
                 .id(new ObjectId("999999999999999999999999"))
-                .client(clientRepo.findById(new ObjectId("222222222222222222222222")))
+                .client(foundC2)
                 .house(h3)
                 .startDate(LocalDate.of(2025, 12, 1))
                 .build();
         insertRentIfNotExists(futureRent, "Rent 3");
     }
 
-    private void insertClientIfNotExists(Client c, String name) {
-        if (clientRepo.findById(c.getId()) == null) {
-            clientRepo.save(c);
+    // --- Обновленные вспомогательные методы ---
+
+    // Используем UserRepo для вставки Client
+    private void insertUserIfNotExists(Client c, String name) {
+        if (userRepo.findById(c.getId()) == null) {
+            userRepo.save(c); // UserRepo умеет сохранять Client, т.к. Client наследуется от User
             System.out.println(name + " Created!");
         }
     }
 
+    // Методы для House и Rent остаются прежними
     private void insertHouseIfNotExists(House h, String name) {
         if (houseRepo.findById(h.getId()) == null) {
             houseRepo.save(h);
@@ -120,8 +140,14 @@ public class DataInit {
 
     private void insertRentIfNotExists(Rent r, String name) {
         if (rentRepo.findById(r.getId()) == null) {
-            rentRepo.save(r);
-            System.out.println(name + " Created!");
+            // Проверка на null нужна, чтобы избежать HouseNotAvaibleException,
+            // если save уже проверяет пересечения
+            try {
+                rentRepo.save(r);
+                System.out.println(name + " Created!");
+            } catch (Exception e) {
+                System.err.println(name + " not created due to overlap/exception: " + e.getMessage());
+            }
         }
     }
 }

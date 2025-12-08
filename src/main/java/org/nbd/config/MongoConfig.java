@@ -22,8 +22,6 @@ public class MongoConfig {
     private final MongoClient client;
     private final String dbName;
 
-
-
     public MongoConfig() {
         Properties props = new Properties();
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("config.properties")) {

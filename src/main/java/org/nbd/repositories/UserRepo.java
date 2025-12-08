@@ -1,14 +1,10 @@
 package org.nbd.repositories;
 
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Updates;
+import com.mongodb.client.MongoDatabase;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
-import org.nbd.config.MongoConfig;
 import org.nbd.model.*;
 
 import java.util.ArrayList;
@@ -17,9 +13,14 @@ import java.util.List;
 @ApplicationScoped
 public class UserRepo extends BaseRepo<User> implements RepoManager<User> {
 
+    // Конструктор по умолчанию (public), необходимый для проксирования CDI
+    public UserRepo() {
+        super();
+    }
+
     @Inject
-    public UserRepo(MongoConfig config) {
-        super(config, "users", User.class);
+    public UserRepo(MongoDatabase database) {
+        super(database);
     }
 
     @Override
@@ -100,5 +101,4 @@ public class UserRepo extends BaseRepo<User> implements RepoManager<User> {
 
         return result;
     }
-
 }

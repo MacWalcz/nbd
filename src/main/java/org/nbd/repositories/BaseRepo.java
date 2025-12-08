@@ -2,21 +2,33 @@ package org.nbd.repositories;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.nbd.config.MongoConfig;
+import jakarta.inject.Inject;
 
+import java.lang.reflect.ParameterizedType;
 
-@AllArgsConstructor
 public abstract class BaseRepo<T> {
 
     protected final MongoDatabase database;
     protected final MongoCollection<T> collection;
     protected final Class<T> clazz;
+    protected final String collectionName;
 
-    public BaseRepo(MongoConfig config, String collectionName, Class<T> clazz) {
-        this.database = config.getDatabase();
-        this.clazz = clazz;
+    // Конструктор по умолчанию (protected), необходимый для проксирования CDI
+    protected BaseRepo() {
+        this.database = null;
+        this.collection = null;
+        this.clazz = null;
+        this.collectionName = null;
+    }
+
+    @Inject
+    public BaseRepo(MongoDatabase database) {
+        this.database = database;
+
+        this.clazz = (Class<T>) ((ParameterizedType) getClass()
+                .getGenericSuperclass()).getActualTypeArguments()[0];
+        this.collectionName = clazz.getSimpleName().toLowerCase() + "s";
+
         this.collection = database.getCollection(collectionName, clazz);
     }
 }
