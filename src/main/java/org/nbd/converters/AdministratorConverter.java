@@ -3,7 +3,6 @@ package org.nbd.converters;
 import lombok.RequiredArgsConstructor;
 import org.nbd.dto.AdministratorDTO;
 import org.nbd.model.Administrator;
-import org.springframework.stereotype.Component;
 
 
 public class AdministratorConverter {

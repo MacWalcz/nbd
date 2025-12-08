@@ -1,39 +1,44 @@
 package org.nbd.services;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.nbd.exceptions.LoginAlreadyExists;
 import org.nbd.exceptions.UserNotFoundException;
 import org.nbd.model.*;
 import org.nbd.repositories.UserRepo;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
-@Service
+@NoArgsConstructor
+@AllArgsConstructor
+@ApplicationScoped
 public class UserService {
 
-    private final UserRepo userRepo;
+    @Inject
+    private UserRepo userRepo;
 
     public User getUser(ObjectId id) {
-        return userRepo.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
+        User user = userRepo.findById(id);
+        if (user == null) throw new UserNotFoundException(id);
+        return user;
     }
 
     public <T extends User> T createUser(T user) {
         try {
             return (T) userRepo.save(user);
-        } catch (DuplicateKeyException e) {
+        } catch (Exception e) {
             throw new LoginAlreadyExists(user.getLogin());
         }
     }
 
     public User getByLogin(String login) {
-        return userRepo.findByLogin(login)
-                .orElseThrow(() -> new UserNotFoundException(login));
+        User user = userRepo.findByLogin(login);
+        if (user == null) throw new UserNotFoundException(login);
+        return user;
     }
 
     public List<User> searchByLogin(String partial) {
@@ -52,26 +57,22 @@ public class UserService {
         user.setLastName(updated.getLastName());
         user.setPhoneNumber(updated.getPhoneNumber());
 
-        if (user instanceof Client && updated instanceof Client c) {
-            ((Client) user).setClientType(c.getClientType());
-        }
-
         return (T) userRepo.save(user);
     }
 
-
     public User activate(ObjectId id) {
-        User user = userRepo.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        User user = getUser(id);
         user.setActive(true);
         return userRepo.save(user);
     }
 
     public User deactivate(ObjectId id) {
-        User user = userRepo.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        User user = getUser(id);
         user.setActive(false);
         return userRepo.save(user);
     }
 
+    // --- Клиенты ---
     public Client getClient(ObjectId id) {
         User user = getUser(id);
         if (user instanceof Client c) return c;
@@ -92,16 +93,14 @@ public class UserService {
     }
 
     public List<Client> getAllClients() {
-        return getAllUsers().stream()
-                .filter(u -> u instanceof Client)
-                .map(u -> (Client) u)
-                .collect(Collectors.toList());
+        return userRepo.findClients();
     }
 
     public Client updateClient(ObjectId id, Client updated) {
         return updateUser(id, updated);
     }
 
+    // --- Работники ---
     public Employee getEmployee(ObjectId id) {
         User user = getUser(id);
         if (user instanceof Employee e) return e;
@@ -115,10 +114,7 @@ public class UserService {
     }
 
     public List<Employee> searchEmployees(String partial) {
-        return searchByLogin(partial).stream()
-                .filter(u -> u instanceof Employee)
-                .map(u -> (Employee) u)
-                .collect(Collectors.toList());
+        return userRepo.findEmployees();
     }
 
     public List<Employee> getAllEmployees() {
@@ -132,6 +128,7 @@ public class UserService {
         return updateUser(id, updated);
     }
 
+    // --- Администраторы ---
     public Administrator getAdministrator(ObjectId id) {
         User user = getUser(id);
         if (user instanceof Administrator a) return a;
@@ -152,10 +149,7 @@ public class UserService {
     }
 
     public List<Administrator> getAllAdministrators() {
-        return getAllUsers().stream()
-                .filter(u -> u instanceof Administrator)
-                .map(u -> (Administrator) u)
-                .collect(Collectors.toList());
+        return userRepo.findAdministrators();
     }
 
     public Administrator updateAdministrator(ObjectId id, Administrator updated) {

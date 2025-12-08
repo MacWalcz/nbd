@@ -1,12 +1,10 @@
 package org.nbd.exceptions;
 
 import org.bson.types.ObjectId;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import jakarta.ws.rs.core.Response;
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
 public class HouseNotFoundException extends AppBaseException {
     public HouseNotFoundException(ObjectId id) {
-        super(HttpStatus.NOT_FOUND,"House with id " + id.toHexString() + " not found");
+        super(Response.Status.NOT_FOUND,"House with id " + id.toHexString() + " not found");
     }
 }

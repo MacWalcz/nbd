@@ -6,8 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.bson.types.ObjectId;
-import org.nbd.model.Client;
-import org.nbd.model.ClientType;
 
 public record ClientDTO(
         @JsonSerialize(using = ToStringSerializer.class)
@@ -21,7 +19,6 @@ public record ClientDTO(
     String lastName,
     @Size(min = 7, max = 15, message = "Phone number must be between 7 and 15 characters")
     String phoneNumber,
-    boolean active,
-    @NotBlank(message = "Client Type cannot be blank")
-    String clientType
+        @NotNull
+    boolean active
 ) {}

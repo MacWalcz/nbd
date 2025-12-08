@@ -1,14 +1,15 @@
 package org.nbd.exceptions;
 
-import org.springframework.http.HttpStatusCode;
-import org.springframework.web.server.ResponseStatusException;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 
-public abstract class AppBaseException extends ResponseStatusException {
-    protected AppBaseException(HttpStatusCode status, String reason) {
-        super(status, reason);
+public abstract class AppBaseException extends WebApplicationException {
+
+    protected AppBaseException(Response.Status status, String message) {
+        super(Response.status(status).entity(message).build());
     }
 
-    protected AppBaseException(HttpStatusCode status, String reason, Throwable cause) {
-        super(status, reason, cause);
+    protected AppBaseException(Response.Status status, String message, Throwable cause) {
+        super(cause, Response.status(status).entity(message).build());
     }
 }

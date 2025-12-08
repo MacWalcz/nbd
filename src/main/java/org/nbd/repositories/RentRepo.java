@@ -1,39 +1,125 @@
 package org.nbd.repositories;
 
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.nbd.exceptions.HouseNotAvaibleException;
+import org.nbd.model.Client;
 import org.nbd.model.Rent;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-@Repository
-public interface RentRepo extends MongoRepository<Rent, ObjectId> {
-    @Transactional
-    default Rent saveRent(Rent rent) {
-        List<Rent> rents = findOverlappingReservations(rent.getHouse().getId(),rent.getStartDate(),rent.getEndDate());
-        if (!rents.isEmpty()) {
-            throw new HouseNotAvaibleException(rent.getHouse().getId());
-        }
-        return save(rent);
+import static com.mongodb.client.model.Filters.*;
+@ApplicationScoped
+public class RentRepo implements RepoManager<Rent> {
+
+    private MongoCollection<Rent> collection;
+
+    public RentRepo() {
     }
 
-    @Query("{ 'id': ?0, '$or': [ " +
-            "{ 'startDate': { '$lte': ?2 }, 'endDate': { '$gte': ?1 } }, " +
-            "{ 'startDate': { '$gte': ?1, '$lte': ?2 } } ] }")
-    List<Rent> findOverlappingReservations(ObjectId id, LocalDate startDate, LocalDate endDate);
+    @Inject
+    public RentRepo(MongoDatabase db) {
+        this.collection = db.getCollection("rents", Rent.class);
+    }
 
-    boolean existsByHouseIdAndEndDateIsNull(ObjectId houseId);
+    public Rent save(Rent rent) {
 
-    List<Rent> findByClientIdAndEndDateIsNull(ObjectId clientId);
-    List<Rent> findByClientIdAndEndDateIsNotNull(ObjectId clientId);
+        List<Rent> overlaps = findOverlappingReservations(
+                rent.getHouse().getId(),
+                rent.getStartDate(),
+                rent.getEndDate()
+        );
 
-    List<Rent> findByHouseIdAndEndDateIsNull(ObjectId houseId);
-    List<Rent> findByHouseIdAndEndDateIsNotNull(ObjectId houseId);
+        if (!overlaps.isEmpty()) {
+            throw new HouseNotAvaibleException(rent.getHouse().getId());
+        }
+
+        collection.insertOne(rent);
+        return rent;
+    }
+
+
+    public List<Rent> findOverlappingReservations(ObjectId houseId, LocalDate start, LocalDate end) {
+
+        Document filter = new Document()
+                .append("house._id", houseId)
+                .append("startDate", new Document("$lte", end))
+                .append("endDate", new Document("$gte", start));
+
+        List<Rent> result = new ArrayList<>();
+        for (Rent r : collection.find(filter)) {
+            result.add(r);
+        }
+        return result;
+    }
+
+
+    public Rent findById(ObjectId id) {
+        return collection.find(eq("_id", id)).first();
+    }
+
+    public List<Rent> findAll() {
+        List<Rent> list = new ArrayList<>();
+        for (Rent r : collection.find()) list.add(r);
+        return list;
+    }
+
+    public void update(ObjectId id, Rent updated) {
+        collection.replaceOne(eq("_id", id), updated);
+    }
+
+    public void deleteById(ObjectId id) {
+        collection.deleteOne(eq("_id", id));
+    }
+
+    public void deleteAll() {
+        collection.deleteMany(new Document());
+    }
+
+    public boolean existsActiveForHouse(ObjectId houseId) {
+        Document filter = new Document()
+                .append("house._id", houseId)
+                .append("endDate", null);
+
+        return collection.find(filter).first() != null;
+    }
+
+    public List<Rent> findByClientIdAndEndDateIsNull(ObjectId clientId) {
+        List<Rent> result = new ArrayList<>();
+        for (Rent r : collection.find(and(eq("client._id", clientId), eq("endDate", null)))) {
+            result.add(r);
+        }
+        return result;
+    }
+
+    public List<Rent> findByClientIdAndEndDateIsNotNull(ObjectId clientId) {
+        List<Rent> result = new ArrayList<>();
+        for (Rent r : collection.find(and(eq("client._id", clientId), ne("endDate", null)))) {
+            result.add(r);
+        }
+        return result;
+    }
+
+    public List<Rent> findByHouseIdAndEndDateIsNull(ObjectId houseId) {
+        List<Rent> result = new ArrayList<>();
+        for (Rent r : collection.find(and(eq("house._id", houseId), eq("endDate", null)))) {
+            result.add(r);
+        }
+        return result;
+    }
+
+    public List<Rent> findByHouseIdAndEndDateIsNotNull(ObjectId houseId) {
+        List<Rent> result = new ArrayList<>();
+        for (Rent r : collection.find(and(eq("house._id", houseId), ne("endDate", null)))) {
+            result.add(r);
+        }
+        return result;
+    }
 
 }

@@ -1,14 +1,10 @@
 package org.nbd.exceptions;
 
+import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
 
 public class HouseActiveRentException extends AppBaseException {
     public HouseActiveRentException(ObjectId houseId) {
-        super(HttpStatus.CONFLICT, "House is already rented");
+        super(Response.Status.CONFLICT, "House " + houseId + " is already rented");
     }
 }
-

@@ -3,7 +3,6 @@ package org.nbd.converters;
 import lombok.RequiredArgsConstructor;
 import org.nbd.dto.EmployeeDTO;
 import org.nbd.model.Employee;
-import org.springframework.stereotype.Component;
 
 public class EmployeeConverter {
 

@@ -1,12 +1,9 @@
 package org.nbd.exceptions;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
+import jakarta.ws.rs.core.Response;
 
 public class LoginAlreadyExists extends AppBaseException {
-
     public LoginAlreadyExists(String login) {
-        super(HttpStatus.CONFLICT, "Login " + login + " already exists");
+        super(Response.Status.CONFLICT, "Login " + login + " already exists");
     }
 }

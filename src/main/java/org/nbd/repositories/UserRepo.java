@@ -1,20 +1,104 @@
 package org.nbd.repositories;
 
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
-import org.nbd.model.Client;
-import org.nbd.model.User;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
+import org.nbd.config.MongoConfig;
+import org.nbd.model.*;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-@Repository
-public interface UserRepo extends MongoRepository<User, ObjectId> {
-    Optional<User> findByLogin(String login);
+@ApplicationScoped
+public class UserRepo extends BaseRepo<User> implements RepoManager<User> {
 
-    List<User> findAllByLoginContainingIgnoreCase(String partial);
+    @Inject
+    public UserRepo(MongoConfig config) {
+        super(config, "users", User.class);
+    }
 
+    @Override
+    public User save(User u) {
+        collection.insertOne(u);
+        return u;
+    }
 
-    boolean existsByLogin(String login);
+    @Override
+    public User findById(ObjectId id) {
+        return collection.find(Filters.eq("_id", id)).first();
+    }
+
+    @Override
+    public void update(ObjectId id, User updated) {
+        collection.replaceOne(Filters.eq("_id", id), updated);
+    }
+
+    @Override
+    public void deleteById(ObjectId id) {
+        collection.deleteOne(Filters.eq("_id", id));
+    }
+
+    @Override
+    public void deleteAll() {
+        collection.deleteMany(Filters.exists("_id"));
+    }
+
+    @Override
+    public List<User> findAll() {
+        return collection.find().into(new ArrayList<>());
+    }
+
+    public User findByLogin(String login) {
+        return collection.find(Filters.eq("login", login)).first();
+    }
+
+    public boolean existsByLogin(String login) {
+        return collection.find(Filters.eq("login", login)).first() != null;
+    }
+
+    public List<User> findByLoginPartial(String partial) {
+        return collection
+                .find(Filters.regex("login", partial, "i"))
+                .into(new ArrayList<>());
+    }
+
+    public List<Administrator> findAdministrators() {
+        return database
+                .getCollection("users", Administrator.class)
+                .find(Filters.eq("_class", "administrator"))
+                .into(new ArrayList<>());
+    }
+
+    public List<Employee> findEmployees() {
+        return database
+                .getCollection("users", Employee.class)
+                .find(Filters.eq("_class", "employee"))
+                .into(new ArrayList<>());
+    }
+
+    public List<Client> findClients() {
+        return database
+                .getCollection("users", Client.class)
+                .find(Filters.eq("_class", "client"))
+                .into(new ArrayList<>());
+    }
+
+    public List<User> findAllByLoginContainingIgnoreCase(String partial) {
+        List<User> result = new ArrayList<>();
+        String lowerPartial = partial.toLowerCase();
+
+        for (User u : collection.find()) {
+            if (u.getLogin() != null && u.getLogin().toLowerCase().contains(lowerPartial)) {
+                result.add(u);
+            }
+        }
+
+        return result;
+    }
+
 }

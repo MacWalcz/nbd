@@ -3,7 +3,6 @@ package org.nbd.converters;
 import lombok.RequiredArgsConstructor;
 import org.nbd.dto.HouseDTO;
 import org.nbd.model.House;
-import org.springframework.stereotype.Component;
 
 
 public class HouseConverter {

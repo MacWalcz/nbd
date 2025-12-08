@@ -166,7 +166,9 @@ public class RestIntegrationRentTest {
                 .queryParam("house", houseId)
                 .queryParam("startTime", startDate.toString())
                 .when()
-                .post();
+                .post()
+                .then()
+                .statusCode(200);
 
         given()
                 .contentType(ContentType.JSON)

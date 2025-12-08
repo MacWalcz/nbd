@@ -3,10 +3,7 @@ package org.nbd.converters;
 import lombok.RequiredArgsConstructor;
 import org.nbd.dto.RentDTO;
 import org.nbd.model.Rent;
-import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
 public class RentConverter {
 
     public static RentDTO rentToRentDTO(Rent rent) {

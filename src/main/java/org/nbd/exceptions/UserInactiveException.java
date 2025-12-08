@@ -1,13 +1,11 @@
 package org.nbd.exceptions;
 
 import org.bson.types.ObjectId;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import jakarta.ws.rs.core.Response;
 
 
 public class UserInactiveException extends AppBaseException {
     public UserInactiveException(ObjectId id) {
-        super (HttpStatus.BAD_REQUEST, "User with id " + id + " is inactive");
+        super (Response.Status.CONFLICT, "User with id " + id + " is inactive");
     }
 }
