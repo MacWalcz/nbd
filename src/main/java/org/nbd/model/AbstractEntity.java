@@ -1,21 +1,23 @@
 package org.nbd.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
-import lombok.NoArgsConstructor;
-import org.bson.codecs.pojo.annotations.BsonId;
-import org.bson.types.ObjectId;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @Getter
 @Setter
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
+@ToString
+@Builder
+@AllArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public abstract class AbstractEntity implements Serializable {
-    @BsonId
-    private ObjectId id;
+
+    @PartitionKey
+    private UUID id;
 
     private long version;
 }
