@@ -5,7 +5,7 @@ import com.datastax.oss.driver.api.core.CqlSession;
 
 import java.net.InetSocketAddress;
 
-public class CassandraSessionManager {
+public class CassandraSessionManager implements AutoCloseable {
 
     private static CqlSession session;
 
@@ -22,7 +22,11 @@ public class CassandraSessionManager {
         return session;
     }
 
+    @Override
     public void close() {
-        session.close();
+        if (session != null && !session.isClosed()) {
+            session.close();
+            System.out.println("Cassandra CqlSession closed successfully.");
+        }
     }
 }

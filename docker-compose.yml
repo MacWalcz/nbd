@@ -13,6 +13,12 @@ services:
       - MAX_HEAP_SIZE=2G
       - HEAP_NEWSIZE=200M
       - CASSANDRA_DATACENTER=dc1
+    healthcheck:
+      test: [ "CMD-SHELL", "[ $$(nodetool statusgossip) = running ]" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
 
   cassandra2:
     image: cassandra:latest
@@ -25,12 +31,19 @@ services:
       - MAX_HEAP_SIZE=2G
       - HEAP_NEWSIZE=200M
       - CASSANDRA_DATACENTER=dc1
+
     depends_on:
       cassandra1:
         condition: service_started
     networks:
       cassandranet:
         ipv4_address: 172.24.0.3
+    healthcheck:
+      test: [ "CMD-SHELL", "[ $$(nodetool statusgossip) = running ]" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
 
 networks:
   cassandranet:

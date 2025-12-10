@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.nbd.config.CassandraSessionManager;
+import org.nbd.mappers.AppMapper;
+import org.nbd.mappers.ClientMapper;
 
 
 import static com.datastax.oss.driver.api.querybuilder.SchemaBuilder.createKeyspace;
@@ -28,11 +30,18 @@ public class CassandraTest {
                 .withDurableWrites(true);
         SimpleStatement createKeyspace = keyspace.build();
         session.execute(createKeyspace);
+
+        //AppMapper clientMapper = new ClientMapperBuilder(session).build();
     }
 
     @Test
     void createTable(){
         Assertions.assertTrue(true);
+    }
+
+    @Test
+    void createClient() {
+
     }
 
 }
