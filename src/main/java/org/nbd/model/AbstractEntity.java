@@ -9,14 +9,22 @@ import lombok.experimental.SuperBuilder;
 import java.io.Serializable;
 import java.util.UUID;
 
-@Getter
-@Setter
-@SuperBuilder(toBuilder = true)
-@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-@ToString
-@AllArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public abstract class AbstractEntity implements Serializable {
     @PartitionKey
     @CqlName("id")
-    private UUID id;
+    protected UUID id;
+
+    public AbstractEntity(){}
+
+    public AbstractEntity(UUID id) {
+        this.id = id;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 }

@@ -14,7 +14,7 @@ public class CassandraSessionManager implements AutoCloseable {
                 .addContactPoint(new InetSocketAddress("cassandra1", 9042))
                 .addContactPoint(new InetSocketAddress("cassandra2", 9043))
                 .withLocalDatacenter("datacenter1")
-                //.withKeyspace(CqlIdentifier.fromCql("rent_a_car"))
+                .withKeyspace(CqlIdentifier.fromCql("rent_a_house"))
                 .build();
     }
 

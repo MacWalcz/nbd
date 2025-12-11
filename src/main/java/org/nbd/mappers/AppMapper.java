@@ -17,7 +17,4 @@ public interface AppMapper {
 
     @DaoFactory
     RentDao rentDao();
-
-    // @DaoFactory
-    // ClientTypeDao clientTypeDao();
 }
