@@ -36,7 +36,7 @@ public class RentService {
     @Transactional
     public Rent createRent(ObjectId clientId, ObjectId houseId, LocalDate startDate) {
 
-        Client client = (Client) userRepo.findById(clientId);
+        Client client = userRepo.findClientById(clientId);
 
         if (client == null) throw new UserNotFoundException(clientId);
 

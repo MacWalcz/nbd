@@ -52,4 +52,5 @@ public class MongoConfig {
     public MongoDatabase mongoDatabase() {
         return client.getDatabase(dbName);
     }
+
 }

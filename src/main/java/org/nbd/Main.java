@@ -8,7 +8,7 @@ public class Main {
             PayaraMicro.getInstance()
                     .addDeployment("target/nbd.war")
                     .bootStrap();
-            System.out.println("Payara Micro запущен на http://localhost:8080/nbd");
+            System.out.println("Payara Micro is running on http://localhost:8080/nbd");
         } catch (Exception e) {
             e.printStackTrace();
         }

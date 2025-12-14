@@ -10,7 +10,7 @@ public interface RepoManager<T> {
 
     T findById(ObjectId id);
 
-    void update(ObjectId id, T t);
+    T update(ObjectId id, T t);
 
     void deleteById(ObjectId id);
 

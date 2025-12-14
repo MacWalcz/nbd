@@ -69,13 +69,13 @@ public class UserController {
     @PATCH
     @Path("/clients/{id}/activate")
     public ClientDTO activateClient(@PathParam("id") String id) {
-        return ClientConverter.clientToClientDTO((Client) service.activate(new ObjectId(id)));
+        return ClientConverter.clientToClientDTO((Client) service.activateClient(new ObjectId(id)));
     }
 
     @PATCH
     @Path("/clients/{id}/deactivate")
     public ClientDTO deactivateClient(@PathParam("id") String id) {
-        return ClientConverter.clientToClientDTO((Client) service.deactivate(new ObjectId(id)));
+        return ClientConverter.clientToClientDTO((Client) service.deactivateClient(new ObjectId(id)));
     }
 
 

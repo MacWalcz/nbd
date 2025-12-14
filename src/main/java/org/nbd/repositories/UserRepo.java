@@ -54,10 +54,25 @@ public class UserRepo extends BaseRepo<User> implements RepoManager<User> {
         return collection.find(Filters.eq("_id", id)).first();
     }
 
+    public Client findClientById(ObjectId id) {
+        return database
+                .getCollection("users", Client.class)
+                .find(Filters.eq("_id", id))
+                .first();
+    }
+
+
     @Override
-    public void update(ObjectId id, User updated) {
+    public User update(ObjectId id, User updated) {
         updated.setId(id);
         collection.replaceOne(Filters.eq("_id", id), updated);
+        return updated;
+    }
+
+    public Client updateClient(ObjectId id, Client updated) {
+        updated.setId(id);
+        collection.replaceOne(Filters.eq("_id", id), updated);
+        return updated;
     }
 
     @Override
@@ -134,6 +149,28 @@ public class UserRepo extends BaseRepo<User> implements RepoManager<User> {
         }
 
         return result;
+    }
+
+    public List<Client> findAllClientsByLoginContainingIgnoreCase(String partial) {
+        List<Client> result = new ArrayList<>();
+        String lowerPartial = partial.toLowerCase();
+
+        List<Client> allUsers = findClients();
+        for (Client u : allUsers) {
+            if (u.getLogin() != null && u.getLogin().toLowerCase().contains(lowerPartial)) {
+                result.add(u);
+            }
+        }
+
+        return result;
+    }
+
+    public Client findClientByLogin(String login) {
+
+        return database
+                .getCollection("users", Client.class)
+                .find(Filters.eq("login", login))
+                .first();
     }
 
 }

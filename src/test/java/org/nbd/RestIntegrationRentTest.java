@@ -14,9 +14,9 @@ import static org.hamcrest.Matchers.*;
 public class RestIntegrationRentTest {
     @BeforeAll
     static void setup() {
-        RestAssured.baseURI = "http://localhost/nbd/rest";
+        RestAssured.baseURI = "http://localhost:8080/nbd/rest/";
         RestAssured.port = 8080;
-
+        RestAssured.basePath = "/rents";
     }
 
     @Test

@@ -72,25 +72,55 @@ public class UserService {
         return userRepo.save(user);
     }
 
+    public User activateClient(ObjectId id) {
+        Client user = userRepo.findClientById(id);
+
+        if (user == null) throw new UserNotFoundException(id);
+
+        Client newClient = new Client();
+
+        newClient.setId(user.getId());
+        newClient.setLogin(user.getLogin());
+        newClient.setFirstName(user.getFirstName());
+        newClient.setLastName(user.getLastName());
+        newClient.setPhoneNumber(user.getPhoneNumber());
+        newClient.setActive(true);
+
+        return userRepo.updateClient(id, newClient);
+    }
+
+    public User deactivateClient(ObjectId id) {
+        Client user = userRepo.findClientById(id);
+
+        if (user == null) throw new UserNotFoundException(id);
+
+        Client newClient = new Client();
+
+        newClient.setId(user.getId());
+        newClient.setLogin(user.getLogin());
+        newClient.setFirstName(user.getFirstName());
+        newClient.setLastName(user.getLastName());
+        newClient.setPhoneNumber(user.getPhoneNumber());
+        newClient.setActive(false);
+
+        return userRepo.updateClient(id, newClient);
+    }
 
 
     public Client getClient(ObjectId id) {
-        User user = getUser(id);
-        if (user instanceof Client c) return c;
-        throw new UserNotFoundException(id);
+
+        Client user = userRepo.findClientById(id);
+        if (user == null) throw new UserNotFoundException(id);
+        return user;
+
     }
 
-    public Client getClientByLogin(String login) {
-        User user = getByLogin(login);
-        if (user instanceof Client c) return c;
-        throw new UserNotFoundException(login);
+    public Client getClientByLogin(String partial) {
+        return userRepo.findClientByLogin(partial);
     }
 
     public List<Client> searchClients(String partial) {
-        return searchByLogin(partial).stream()
-                .filter(u -> u instanceof Client)
-                .map(u -> (Client) u)
-                .collect(Collectors.toList());
+        return userRepo.findAllClientsByLoginContainingIgnoreCase(partial);
     }
 
     public List<Client> getAllClients() {
@@ -98,7 +128,20 @@ public class UserService {
     }
 
     public Client updateClient(ObjectId id, Client updated) {
-        return updateUser(id, updated);
+        Client user = userRepo.findClientById(id);
+
+        if (user == null) throw new UserNotFoundException(id);
+
+        Client newClient = new Client();
+
+        newClient.setId(user.getId());
+        newClient.setLogin(updated.getLogin());
+        newClient.setFirstName(updated.getFirstName());
+        newClient.setLastName(updated.getLastName());
+        newClient.setPhoneNumber(updated.getPhoneNumber());
+        newClient.setActive(updated.isActive());
+
+        return userRepo.updateClient(id, newClient);
     }
 
     public Employee getEmployee(ObjectId id) {

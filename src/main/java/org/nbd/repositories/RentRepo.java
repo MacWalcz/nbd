@@ -75,9 +75,10 @@ public class RentRepo implements RepoManager<Rent> {
         return list;
     }
 
-    public void update(ObjectId id, Rent updated) {
+    public Rent update(ObjectId id, Rent updated) {
         updated.setId(id);
         collection.replaceOne(eq("_id", id), updated);
+        return updated;
     }
 
     public void deleteById(ObjectId id) {

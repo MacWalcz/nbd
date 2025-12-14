@@ -51,7 +51,7 @@ public class HouseService {
         house.setHouseNumber(updatedHouse.getHouseNumber());
         house.setPrice(updatedHouse.getPrice());
         house.setArea(updatedHouse.getArea());
-        return houseRepo.save(house);
+        return houseRepo.update(id, updatedHouse);
     }
 
     @Transactional

@@ -38,9 +38,10 @@ public class HouseRepo extends BaseRepo<House> implements RepoManager<House> {
         return collection.find().into(new ArrayList<>());
     }
 
-    public void update(ObjectId id, House updated) {
+    public House update(ObjectId id, House updated) {
         updated.setId(id);
         collection.replaceOne(eq("_id", id), updated);
+        return updated;
     }
 
     public void deleteById(ObjectId id) {
