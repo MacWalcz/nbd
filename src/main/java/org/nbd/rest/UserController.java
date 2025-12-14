@@ -21,17 +21,17 @@ public class UserController {
     @Inject
     private UserService service;
 
-
+    //CLIENTS
     @GET
     @Path("/clients/{id}")
     public ClientDTO getClient(@PathParam("id") String id) {
-        return ClientConverter.clientToClientDTO(service.getClient(new ObjectId(id) ));
+        return ClientConverter.clientToClientDTO(service.getClient(new ObjectId(id)));
     }
 
     @POST
     @Path("/clients")
     public ClientDTO createClient(@Valid ClientDTO dto) {
-        Client saved = service.createUser(ClientConverter.clientDTOToClient(dto));
+        Client saved = service.createClient(ClientConverter.clientDTOToClient(dto));
         return ClientConverter.clientToClientDTO(saved);
     }
 
@@ -69,16 +69,16 @@ public class UserController {
     @PATCH
     @Path("/clients/{id}/activate")
     public ClientDTO activateClient(@PathParam("id") String id) {
-        return ClientConverter.clientToClientDTO((Client) service.activateClient(new ObjectId(id)));
+        return ClientConverter.clientToClientDTO(service.activateClient(new ObjectId(id)));
     }
 
     @PATCH
     @Path("/clients/{id}/deactivate")
     public ClientDTO deactivateClient(@PathParam("id") String id) {
-        return ClientConverter.clientToClientDTO((Client) service.deactivateClient(new ObjectId(id)));
+        return ClientConverter.clientToClientDTO(service.deactivateClient(new ObjectId(id)));
     }
 
-
+    //EMPLOYEES
     @GET
     @Path("/employees/{id}")
     public EmployeeDTO getEmployee(@PathParam("id") String id) {
@@ -88,7 +88,7 @@ public class UserController {
     @POST
     @Path("/employees")
     public EmployeeDTO createEmployee(@Valid EmployeeDTO dto) {
-        Employee saved = service.createUser(EmployeeConverter.employeeDTOToEmployee(dto));
+        Employee saved = service.createEmployee(EmployeeConverter.employeeDTOToEmployee(dto));
         return EmployeeConverter.employeeToEmployeeDTO(saved);
     }
 
@@ -126,16 +126,16 @@ public class UserController {
     @PATCH
     @Path("/employees/{id}/activate")
     public EmployeeDTO activateEmployee(@PathParam("id") String id) {
-        return EmployeeConverter.employeeToEmployeeDTO((Employee) service.activate(new ObjectId(id)));
+        return EmployeeConverter.employeeToEmployeeDTO(service.activateEmployee(new ObjectId(id)));
     }
 
     @PATCH
     @Path("/employees/{id}/deactivate")
     public EmployeeDTO deactivateEmployee(@PathParam("id") String id) {
-        return EmployeeConverter.employeeToEmployeeDTO((Employee) service.deactivate(new ObjectId(id)));
+        return EmployeeConverter.employeeToEmployeeDTO(service.deactivateEmployee(new ObjectId(id)));
     }
 
-
+    //ADMINISTRATORS
     @GET
     @Path("/administrators/{id}")
     public AdministratorDTO getAdministrator(@PathParam("id") String id) {
@@ -145,7 +145,7 @@ public class UserController {
     @POST
     @Path("/administrators")
     public AdministratorDTO createAdministrator(@Valid AdministratorDTO dto) {
-        Administrator saved = service.createUser(AdministratorConverter.administratorDTOToAdministrator(dto));
+        Administrator saved = service.createAdministrator(AdministratorConverter.administratorDTOToAdministrator(dto));
         return AdministratorConverter.administratorToAdministratorDTO(saved);
     }
 
@@ -183,17 +183,17 @@ public class UserController {
     @PATCH
     @Path("/administrators/{id}/activate")
     public AdministratorDTO activateAdministrator(@PathParam("id") String id) {
-        return AdministratorConverter.administratorToAdministratorDTO((Administrator) service.activate(new ObjectId(id)));
+        return AdministratorConverter.administratorToAdministratorDTO(service.activateAdministrator(new ObjectId(id)));
     }
 
     @PATCH
     @Path("/administrators/{id}/deactivate")
     public AdministratorDTO deactivateAdministrator(@PathParam("id") String id) {
-        return AdministratorConverter.administratorToAdministratorDTO((Administrator) service.deactivate(new ObjectId(id)));
+        return AdministratorConverter.administratorToAdministratorDTO(service.deactivateAdministrator(new ObjectId(id)));
     }
 
     @GET
-    public List<User> getAllUsers() {
-        return service.getAllUsers();
+    public List<Object> getAllUsersMixed() {
+        return service.getAllUsersMixed();
     }
 }

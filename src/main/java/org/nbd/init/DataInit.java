@@ -81,9 +81,9 @@ public class DataInit {
                 .build();
         insertHouseIfNotExists(h3, "House 3");
 
-        Client foundC1 = (Client) userRepo.findById(new ObjectId("111111111111111111111111"));
-        Client foundC3 = (Client) userRepo.findById(new ObjectId("333333333333333333333333"));
-        Client foundC2 = (Client) userRepo.findById(new ObjectId("222222222222222222222222"));
+        Client foundC1 = (Client) userRepo.findClientById(new ObjectId("111111111111111111111111"));
+        Client foundC3 = (Client) userRepo.findClientById(new ObjectId("333333333333333333333333"));
+        Client foundC2 = (Client) userRepo.findClientById(new ObjectId("222222222222222222222222"));
 
 
         Rent pastRent = Rent.builder()
@@ -116,8 +116,8 @@ public class DataInit {
 
 
     private void insertUserIfNotExists(Client c, String name) {
-        if (userRepo.findById(c.getId()) == null) {
-            userRepo.save(c);
+        if (userRepo.findClientById(c.getId()) == null) {
+            userRepo.saveClient(c);
             System.out.println(name + " Created!");
         }
     }
