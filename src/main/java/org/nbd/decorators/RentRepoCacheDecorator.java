@@ -7,6 +7,7 @@ import org.nbd.model.Rent;
 import org.nbd.repositories.RepoManager;
 import org.bson.types.ObjectId;
 import redis.clients.jedis.Jedis;
+import org.nbd.kafka.RentProducer;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,9 +16,11 @@ public class RentRepoCacheDecorator implements RepoManager<Rent> {
 
     private final RepoManager<Rent> repo;
     private static final String PREFIX = "rent:";
+    private final RentProducer rentProducer;
 
-    public RentRepoCacheDecorator(RepoManager<Rent> repo) {
+    public RentRepoCacheDecorator(RepoManager<Rent> repo, RentProducer rentProducer) {
         this.repo = repo;
+        this.rentProducer = rentProducer;
     }
 
     public void save(Rent rent) {
@@ -27,6 +30,9 @@ public class RentRepoCacheDecorator implements RepoManager<Rent> {
         if (!overlaps.isEmpty()) throw new HouseNotAvaibleException("Dom jest zajęty!");
 
         repo.save(rent);
+
+        rentProducer.sendRentEvent(rent);
+
         invalidateCache(rent.getId());
     }
 
