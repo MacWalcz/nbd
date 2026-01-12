@@ -72,6 +72,9 @@ public class RentService {
     public Rent endRent(ObjectId rentId, LocalDate endDate) {
         Rent rent = rentRepo.findById(rentId)
                 .orElseThrow(() -> new RentNotFoundException(rentId));
+        if (rent.getEndDate().isBefore(rent.getStartDate())) {
+            throw new UserInactiveException(rentId);
+        }
         if (rent.getCost() != null) {
             throw new RentAlreadyEnded(rentId);
         }

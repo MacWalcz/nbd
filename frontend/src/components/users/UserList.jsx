@@ -26,9 +26,8 @@ const UserList = () => {
 
     const handleActivation = async (id, type, isActive) => {
         try {
-            // toggleActiveStatus zawiera już potwierdzenie (Wymaganie!)
             await toggleActiveStatus(id, type, !isActive);
-            loadUsers(); // Odświeżenie listy
+            loadUsers();
         } catch (e) {
             if (e.message !== "Anulowano przez użytkownika.") {
                 alert(`Błąd zmiany statusu: ${e.response ? e.response.data.reason : e.message}`);
@@ -36,7 +35,6 @@ const UserList = () => {
         }
     };
 
-    // Filtrowanie
     const filteredUsers = users.filter(user =>
         !filterId || user.id.toLowerCase().includes(filterId.toLowerCase())
     );
@@ -76,13 +74,13 @@ const UserList = () => {
                     {filteredUsers.map(user => {
                         let userType;
                         if (user.clientType !== undefined) {
-                            userType = 'klient';
+                            userType = 'clients';
                         }
                         else if (user.position !== undefined) {
-                            userType = 'pracownik';
+                            userType = 'employees';
                         }
                         else {
-                            userType = 'administrator';
+                            userType = 'administrators';
                         }
 
                         return (

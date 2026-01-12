@@ -1,10 +1,7 @@
-// Plik: frontend/src/components/users/UserForm.jsx
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { createUser, fetchUserById, updateUser } from '../../api/apiService';
 
-// Podstawowa walidacja po stronie klienta (Wymaganie!)
 const validate = (data, isClient) => {
     const errors = {};
     if (!data.login || data.login.length < 3 || data.login.length > 30) {
@@ -22,11 +19,10 @@ const validate = (data, isClient) => {
 };
 
 const UserForm = () => {
-    const { id, type } = useParams(); // type to 'clients', 'employees', 'administrators'
+    const { id, type } = useParams();
     const navigate = useNavigate();
     const isEdit = !!id;
-    const initialType = type || 'clients'; // Domyślnie Klient przy tworzeniu
-    const isClientForm = initialType === 'clients';
+    const initialType = type || 'clients';
 
     const [formData, setFormData] = useState({
         login: '', firstName: '', lastName: '', phoneNumber: '', active: false,
@@ -36,7 +32,6 @@ const UserForm = () => {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(isEdit);
 
-    // Ładowanie danych do edycji
     useEffect(() => {
         if (isEdit) {
             setLoading(true);
@@ -48,7 +43,6 @@ const UserForm = () => {
                         lastName: data.lastName || '',
                         phoneNumber: data.phoneNumber || '',
                         active: data.active,
-                        // ClientType jest obiektem, ale w DTO jest Stringiem (1, 2, 3)
                         clientType: data.clientType || '1',
                         id: data.id,
                         version: data.version
@@ -81,7 +75,6 @@ const UserForm = () => {
             return;
         }
 
-        // Potwierdzenie akcji (Wymaganie!)
         const actionText = isEdit ? `modyfikację użytkownika ${id.substring(0, 8)}` : "utworzenie nowego użytkownika";
         if (!window.confirm(`Czy na pewno chcesz wykonać ${actionText}?`)) {
             return;
@@ -97,7 +90,24 @@ const UserForm = () => {
             }
             navigate('/users');
         } catch (error) {
-            alert(`Błąd: ${error.response ? error.response.data.reason : error.message}`);
+            let errorMessage = "Wystąpił nieznany błąd podczas operacji.";
+
+            if (error.response) {
+                const status = error.response.status;
+                const data = error.response.data;
+
+                if (status === 409 && data.reason === "LoginAlreadyExists") {
+                    errorMessage = `Błąd tworzenia: Login "${formData.login}" jest już zajęty.`;
+                } else if (data.reason) {
+                    errorMessage = `Błąd serwera: ${data.reason}`;
+                } else {
+                    errorMessage = `Błąd tworzenia: Login "${formData.login}" jest już zajęty.`;
+                }
+            } else {
+                errorMessage = `Błąd sieci lub systemu: ${error.message}`;
+            }
+
+            alert(errorMessage);
         }
     };
 
@@ -154,13 +164,6 @@ const UserForm = () => {
                         {errors.clientType && <span style={{ color: 'red' }}>{errors.clientType}</span>}
                     </div>
                 )}
-
-
-
-                <div className="form-group">
-                    <label>Aktywny:</label>
-                    <input type="checkbox" name="active" checked={formData.active} onChange={handleChange} style={{ display: 'inline', width: 'auto' }} />
-                </div>
 
                 <button type="submit" className="primary">{isEdit ? 'Zapisz Zmiany' : 'Utwórz'}</button>
                 <button type="button" onClick={() => navigate('/users')} style={{ marginLeft: '10px' }}>Anuluj</button>

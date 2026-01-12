@@ -19,7 +19,7 @@ import static org.nbd.converters.RentConverter.rentToRentDTO;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/rents")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.PATCH, RequestMethod.OPTIONS}, allowedHeaders = "*")
 public class RentController {
 
     private final RentService service;

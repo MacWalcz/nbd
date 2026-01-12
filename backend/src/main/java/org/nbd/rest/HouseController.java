@@ -18,7 +18,7 @@ import static org.nbd.converters.HouseConverter.houseToHouseDTO;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/houses")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.PATCH, RequestMethod.OPTIONS}, allowedHeaders = "*")
 public class HouseController {
 
     private final HouseService service;

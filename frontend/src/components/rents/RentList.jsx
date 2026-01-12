@@ -1,16 +1,11 @@
-// Plik: frontend/src/components/rents/RentList.jsx
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { endRent, fetchAllRents } from '../../api/apiService';
 import { getCurrentDateString } from '../../utils/helpers';
 
-
-// --- Komponent wyświetlający pełną tabelę (dla aktywnych i zakończonych) ---
 const RentTable = ({ rents, title }) => {
     if (!rents.length) return <h4>Brak {title}.</h4>;
 
-    // Dodajemy inline style dla lepszego łamania słów dla ID w tabeli
     const idCellStyle = {
         maxWidth: '120px',
         overflowX: 'hidden',
@@ -51,14 +46,11 @@ const RentTable = ({ rents, title }) => {
     );
 };
 
-
-// --- NOWY KOMPONENT: Formularz zakończenia najmu z listą rozwijaną ---
 const RentEndForm = ({ currentRents, onRentEnd }) => {
     const [rentIdToTerminate, setRentIdToTerminate] = useState('');
     const [endDate, setEndDate] = useState(getCurrentDateString());
 
     useEffect(() => {
-        // Ustaw domyślny wybór na pierwszy najem, jeśli lista nie jest pusta
         if (currentRents.length > 0 && !rentIdToTerminate) {
             setRentIdToTerminate(currentRents[0].id);
         }
@@ -94,7 +86,6 @@ const RentEndForm = ({ currentRents, onRentEnd }) => {
                         required
                         style={{ width: '100%', boxSizing: 'border-box' }}
                     >
-                        {/* KORYGUJE TEKST WYBORU */}
                         <option value="" disabled>--- Wybierz Najem ---</option>
                         {currentRents.map(rent => (
                             <option key={rent.id} value={rent.id}>
@@ -115,8 +106,6 @@ const RentEndForm = ({ currentRents, onRentEnd }) => {
         </div>
     );
 };
-
-// ... (Główny komponent RentList pozostaje ten sam)
 
 const RentList = () => {
     const navigate = useNavigate();

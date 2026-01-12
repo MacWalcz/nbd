@@ -17,31 +17,24 @@ const RentForm = () => {
     useEffect(() => {
         const loadFormData = async () => {
             try {
-                // 1. Pobieramy wszystkie Domy i Klientów
                 const [clientsData, housesData] = await Promise.all([
                     fetchAllClients(),
                     fetchAllHouses()
                 ]);
 
-                // 2. Pobieramy WSZYSTKIE najmy (do filtrowania dostępności)
                 const allRents = await fetchAllRents();
 
-                // --- LOGIKA FILTROWANIA ZAJĘTYCH DOMÓW ---
-
-                // Znajdź ID domów, które są AKTYWNIE wynajmowane (endDate jest null/undefined)
                 const occupiedHouseIds = new Set(
                     allRents
-                        .filter(rent => !rent.endDate) // Tylko niezakończone najmy
-                        .map(rent => rent.house ? rent.house.id : null) // Pobieramy ID Domu
-                        .filter(id => id !== null) // Filtrujemy null
+                        .filter(rent => !rent.endDate)
+                        .map(rent => rent.house ? rent.house.id : null)
+                        .filter(id => id !== null)
                 );
 
-                // Filtrujemy pełną listę domów, zostawiając tylko te, których ID nie ma na liście zajętych
                 const filteredHouses = housesData.filter(h => !occupiedHouseIds.has(h.id));
 
-                // Ustawiamy stany
-                setClients(clientsData.filter(c => c.active)); // Tylko aktywni klienci
-                setAvailableHouses(filteredHouses); // TYLKO WOLNE DOMY
+                setClients(clientsData.filter(c => c.active));
+                setAvailableHouses(filteredHouses);
 
             } catch (error) {
                 alert("Błąd ładowania danych klientów/domów lub najmów.");
@@ -94,7 +87,7 @@ const RentForm = () => {
                     <label>Dom (Tylko Wolne):</label>
                     <select value={houseId} onChange={e => setHouseId(e.target.value)} required disabled={availableHouses.length === 0}>
                         <option value="">Wybierz Dom</option>
-                        {availableHouses.map(h => ( // Używamy tylko dostępnych domów!
+                        {availableHouses.map(h => (
                             <option key={h.id} value={h.id}>Nr {h.houseNumber} ({h.area} m², {h.price}/dzień)</option>
                         ))}
                     </select>

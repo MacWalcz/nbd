@@ -1,5 +1,3 @@
-// Plik: frontend/src/components/users/ClientDetails.jsx
-
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { fetchUserById, fetchRentsForClient } from '../../api/apiService';
@@ -23,7 +21,6 @@ const RentTable = ({ rents, title }) => {
                 <tbody>
                 {rents.map(rent => (
                     <tr key={rent.id}>
-                        {/* POPRAWKA: Usunięto style ograniczające widoczność ID */}
                         <td data-label="ID Najmu">{rent.id}</td>
                         <td data-label="Dom (Numer)">{rent.house ? rent.house.houseNumber : 'N/A'}</td>
                         <td data-label="Data Startu">{rent.startDate}</td>
@@ -53,7 +50,6 @@ const ClientDetails = () => {
                 const clientData = await fetchUserById(id, 'client');
                 setClient(clientData);
 
-                // Pobranie alokacji (Wymaganie!)
                 const currentData = await fetchRentsForClient(id, true);
                 setCurrentRents(currentData);
 
@@ -87,7 +83,6 @@ const ClientDetails = () => {
                 <p><strong>Status:</strong> <span style={{ color: client.active ? 'green' : 'red' }}>{client.active ? 'Aktywny' : 'Nieaktywny'}</span></p>
             </div>
 
-            {/* Wymaganie: Lista alokacji */}
             <RentTable rents={currentRents} title="Aktualne (Niezakończone) Alokacje" />
             <RentTable rents={pastRents} title="Zakończone Alokacje" />
 

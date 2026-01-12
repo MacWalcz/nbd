@@ -57,7 +57,7 @@ public class UserService {
         }
 
         if (user instanceof Employee existingEmployee && updated instanceof Employee incomingEmployee) {
-            existingEmployee.setPosition(incomingEmployee.getPosition());
+            existingEmployee.setPosition("lol");
 
         }
 
