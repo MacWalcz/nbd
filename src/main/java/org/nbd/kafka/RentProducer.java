@@ -23,7 +23,6 @@ public class RentProducer {
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
-        // idempotencja
         props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
 
         this.producer = new KafkaProducer<>(props);
@@ -36,7 +35,7 @@ public class RentProducer {
                 .timestamp(System.currentTimeMillis())
                 .build();
 
-        String key = rent.getId().toHexString(); // ID jako klucz dla porządkowania/partycjonowania
+        String key = rent.getId().toHexString();
         String jsonValue = JsonUtil.toJson(event);
 
         ProducerRecord<String, String> record = new ProducerRecord<>(

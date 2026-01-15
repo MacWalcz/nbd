@@ -30,7 +30,6 @@ public class RentConsumer implements Runnable {
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
 
-        // Dokładnie raz
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
@@ -54,7 +53,6 @@ public class RentConsumer implements Runnable {
                         System.out.printf("[KONSUMENT %s] Odebrano Part: %d, Offset: %d%n",
                                 consumerId, record.partition(), record.offset());
 
-                        // Zapis do Bazy Danych
                         rentAnalysisRepo.save(rentEvent);
                         latch.countDown();
 
