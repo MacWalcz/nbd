@@ -1,0 +1,143 @@
+/* Plik: frontend/src/index.css */
+
+/* --- STYLI ORYGINALNE (DLA WIDOKU DESKTOP) --- */
+
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f9;
+}
+
+nav a {
+  padding: 10px 15px;
+  text-decoration: none;
+  background: #007bff;
+  color: white;
+  margin-right: 5px;
+  border-radius: 4px;
+}
+
+nav a:hover {
+  background: #0056b3;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+button {
+  cursor: pointer;
+  padding: 5px 10px;
+  margin-right: 5px;
+  border: none;
+  border-radius: 3px;
+}
+
+button.primary {
+  background-color: #28a745;
+  color: white;
+}
+
+button.danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+button.info {
+  background-color: #007bff;
+  color: white;
+}
+
+input, select {
+  padding: 8px;
+  margin: 5px 0;
+  display: block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+
+/* --- SEKCJA RESPONSIVE WEB DESIGN (DLA URZĄDZEŃ MOBILNYCH) --- */
+
+@media (max-width: 600px) {
+
+  /* 1. Nawigacja - Stackowanie linków */
+  nav a {
+    display: block;
+    width: 100%;
+    margin-right: 0; /* Usuń margines między linkami */
+    margin-bottom: 5px;
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  /* 2. Formularze i elementy interaktywne */
+  input, select, button {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Przyciski zachowają odstępy, ale będą pełnej szerokości */
+  td button {
+    margin: 5px 0;
+  }
+
+  /* 3. Tabele - Transformacja na "kartę" (Card-style) */
+
+  table, thead, tbody, th, td, tr {
+    display: block; /* Traktujemy je jako elementy blokowe */
+  }
+
+  /* Ukrycie nagłówka tabeli */
+  thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  /* Ograniczenie marginesu i dodanie obramowania do wierszy (karta) */
+  tr {
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+  }
+
+  /* Właściwe formatowanie komórek (TD) */
+  td {
+    border: none;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    padding-left: 50%; /* Dodaje miejsce na etykietę */
+    text-align: right;
+    min-height: 40px; /* Minimalna wysokość komórki */
+  }
+
+  /* Wyświetlenie nagłówka w komórce przed danymi */
+  td:before {
+    content: attr(data-label); /* Używa atrybutu data-label (MUSISZ DODAĆ GO W KOMPONENTACH REACT) */
+    position: absolute;
+    left: 6px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    text-align: left;
+    font-weight: bold;
+    color: #555;
+  }
+}
