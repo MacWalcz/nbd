@@ -53,7 +53,6 @@ export default function UserEdit() {
         ]);
     };
 
-    // ГЛАВНОЕ ИСПРАВЛЕНИЕ: Если данных нет или идет загрузка — показываем только спиннер
     if (loading || !form) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

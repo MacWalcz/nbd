@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { createUser } from '../api/apiService';
-import { Picker } from '@react-native-picker/picker'; // Нужно установить: npm install @react-native-picker/picker
+import { Picker } from '@react-native-picker/picker';
 
 export default function UserCreate() {
     const router = useRouter();

@@ -18,7 +18,6 @@ export default function ClientDetails() {
                 fetchRentsForClient(id, false)
             ]);
 
-            // Walidacja danych klienta z DTO
             if (!cData || !cData.login) throw new Error("Niekompletne dane klienta");
 
             setClient(cData);

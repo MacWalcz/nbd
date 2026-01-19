@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { API_URL } from '../constants/Config';
 
 const YOUR_LOCAL_IP = import.meta.env.VITE_API_BASE_URL;
 const API_URL = `http://${YOUR_LOCAL_IP}:8080`;
@@ -7,8 +6,6 @@ const API_URL = `http://${YOUR_LOCAL_IP}:8080`;
 if (!API_URL) {
     console.error("Błąd konfiguracji: YOUR_LOCAL_IP nie jest zdefiniowany w .env!");
 }
-
-
 
 const getTypePath = (userType) => {
     if (userType.toLowerCase().includes('client')) return 'clients';

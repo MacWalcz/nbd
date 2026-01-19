@@ -20,7 +20,6 @@ export default function RentForm() {
             try {
                 const [cData, hData, rData] = await Promise.all([fetchAllClients(), fetchAllHouses(), fetchAllRents()]);
 
-                // Identyczna logika filtrowania jak w RentForm.jsx
                 const occupied = new Set(rData.filter(r => !r.endDate).map(r => r.house?.id).filter(id => id));
                 const filteredHouses = hData.filter(h => !occupied.has(h.id));
 

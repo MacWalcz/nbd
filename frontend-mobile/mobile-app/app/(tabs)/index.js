@@ -21,14 +21,12 @@ export default function UserList() {
         }
     };
 
-    // Автоматическое обновление при фокусе на экран
     useFocusEffect(
         useCallback(() => {
             load();
         }, [])
     );
 
-    // НОВАЯ ФУНКЦИЯ ПОДТВЕРЖДЕНИЯ
     const handleToggleStatus = (id, userType, currentActive) => {
         const actionText = currentActive ? 'dezaktywować' : 'aktywować';
 
@@ -58,23 +56,52 @@ export default function UserList() {
     const filtered = users.filter(u => u.id.toLowerCase().includes(filterId.toLowerCase()));
 
     const renderUser = ({ item }) => {
-        const userType = item.clientType !== undefined ? 'clients' : (item.position !== undefined ? 'employees' : 'administrators');
+
+        const isClient = item.clientType !== undefined;
+        const isEmployee = item.position !== undefined;
+
+        const userType = isClient ? 'clients' : (isEmployee ? 'employees' : 'administrators');
+
+        const getClientTypeName = (type) => {
+            const types = { "1": "Default", "2": "Premium", "3": "Luxury" };
+            return types[String(type)] || "N/A";
+        };
 
         return (
             <View style={styles.card}>
-                <View style={{flex:1}}>
+                <View style={{ flex: 1 }}>
                     <Text style={styles.idText}>{item.id}</Text>
                     <Text style={styles.name}>{item.firstName} {item.lastName} ({item.login})</Text>
-                    <Text style={[styles.status, {color: item.active ? 'green' : 'red'}]}>
+
+                    <Text style={styles.detailsText}>
+                        Tel: {item.phoneNumber || 'Brak'}
+                    </Text>
+
+                    {userType === 'clients' && (
+                        <Text style={styles.detailsText}>
+                            Typ: Klient <Text style={styles.boldText}>{getClientTypeName(item.clientType)}</Text>
+                        </Text>
+                    )}
+
+                    {!isClient  && (
+                        <Text style={styles.detailsText}>
+                            Rola: <Text style={styles.boldText}>Administrator</Text>
+                        </Text>
+                    )}
+
+                    <Text style={[styles.status, { color: item.active ? 'green' : 'red' }]}>
                         {item.active ? 'AKTYWNY' : 'NIEAKTYWNY'}
                     </Text>
                 </View>
+
                 <View style={styles.actions}>
-                    {userType === 'clients' && (
+
+                    {isClient && (
                         <TouchableOpacity onPress={() => router.push(`/client/${item.id}`)} style={styles.btnInfo}>
                             <Text style={styles.btnText}>INFO</Text>
                         </TouchableOpacity>
                     )}
+
                     <TouchableOpacity
                         onPress={() => router.push({ pathname: `/user-edit/${item.id}`, params: { type: userType } })}
                         style={styles.btnEdit}
@@ -82,10 +109,9 @@ export default function UserList() {
                         <Text style={styles.btnText}>EDYCJA</Text>
                     </TouchableOpacity>
 
-                    {/* Кнопка с вызовом подтверждения */}
                     <TouchableOpacity
                         onPress={() => handleToggleStatus(item.id, userType, item.active)}
-                        style={[styles.btnStatus, {backgroundColor: item.active ? '#ff4444' : '#00C851'}]}
+                        style={[styles.btnStatus, { backgroundColor: item.active ? '#ff4444' : '#00C851' }]}
                     >
                         <Text style={styles.btnText}>{item.active ? 'OFF' : 'ON'}</Text>
                     </TouchableOpacity>

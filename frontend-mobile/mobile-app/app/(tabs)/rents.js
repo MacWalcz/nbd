@@ -19,7 +19,6 @@ export default function RentList() {
             setRents(data);
             const active = data.filter(r => !r.endDate);
             if (active.length > 0) {
-                // Устанавливаем первый ID только если он еще не выбран
                 setRentIdToTerminate(prev => prev || active[0].id);
             }
         } catch (e) {
@@ -29,7 +28,6 @@ export default function RentList() {
         }
     };
 
-    // Обновляем данные при каждом фокусе на экран
     useFocusEffect(
         useCallback(() => {
             loadData();
@@ -39,18 +37,15 @@ export default function RentList() {
     const handleEndRent = async () => {
         if (!rentIdToTerminate) return Alert.alert("Błąd", "Wybierz najem");
 
-        // 1. Находим выбранную аренду в общем списке
         const selectedRent = rents.find(r => r.id === rentIdToTerminate);
 
         if (selectedRent) {
             const start = new Date(selectedRent.startDate);
             const end = new Date(endDate);
 
-            // Сбрасываем время в 00:00:00 для корректного сравнения только дат
             start.setHours(0, 0, 0, 0);
             end.setHours(0, 0, 0, 0);
 
-            // 2. Проверка: дата окончания не может быть раньше даты начала
             if (end < start) {
                 return Alert.alert(
                     "Błąd daty",
@@ -62,7 +57,7 @@ export default function RentList() {
         try {
             await endRent(rentIdToTerminate, endDate);
             Alert.alert("Sukces", "Pomyślnie zakończono najem!");
-            setRentIdToTerminate(''); // Сбрасываем выбор
+            setRentIdToTerminate('');
             loadData();
         } catch (error) {
             const msg = error.response?.data?.reason || error.response?.data?.message || error.message;

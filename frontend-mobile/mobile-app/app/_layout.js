@@ -7,19 +7,24 @@ export default function RootLayout() {
             headerTintColor: '#fff',
             headerTitleStyle: { fontWeight: 'bold' },
         }}>
-            {/* Основное меню (внизу) */}
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
-            {/* Форма пользователя - откроется как модальное окно */}
             <Stack.Screen
-                name="user-form"
+                name="user-create"
                 options={{
                     presentation: 'modal',
                     title: 'Nowy Użytkownik'
                 }}
             />
 
-            {/* Форма аренды */}
+            <Stack.Screen
+                name="user-edit/[id]"
+                options={{
+                    presentation: 'modal',
+                    title: 'Edytuj Użytkownika'
+                }}
+            />
+
             <Stack.Screen
                 name="rent-form"
                 options={{
@@ -28,7 +33,6 @@ export default function RootLayout() {
                 }}
             />
 
-            {/* Детали клиента */}
             <Stack.Screen
                 name="client/[id]"
                 options={{
