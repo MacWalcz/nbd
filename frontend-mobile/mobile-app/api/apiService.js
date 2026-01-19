@@ -8,6 +8,12 @@ const apiClient = axios.create({
     }
 });
 
+const formatToISO = (date) => {
+    if (!date) return null;
+    const d = new Date(date);
+    return d.toISOString().split('T')[0]; // Вырезает только YYYY-MM-DD
+};
+
 // Pomocnik do formatowania daty na YYYY-MM-DD (identycznie jak w Twoim helpers.js)
 const formatToBackendDate = (date) => {
     if (!date) return '';
@@ -73,8 +79,15 @@ export const createRent = (clientId, houseId, startDate) => {
     return apiClient.post(`/rents?client=${clientId}&house=${houseId}&startTime=${dateStr}`).then(res => res.data);
 };
 
-export const endRent = (rentId, endDate) => {
-    // Spring Boot @RequestParam LocalDate endTime
-    const dateStr = formatToBackendDate(endDate);
-    return apiClient.put(`/rents/${rentId}/end?endTime=${dateStr}`).then(res => res.data);
+export const endRent = async (rentId, endDate) => {
+    const formattedDate = formatToISO(endDate);
+
+    // ВАЖНО: axios.put(url, data, config).
+    // Так как endTime — это @RequestParam, передаем его в params
+    const response = await axios.put(`${API_URL}/rents/${rentId}/end`, null, {
+        params: {
+            endTime: formattedDate
+        }
+    });
+    return response.data;
 };
