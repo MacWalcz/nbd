@@ -5,16 +5,23 @@ import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.nbd.converters.RentConverter;
 import org.nbd.dto.RentDTO;
+import org.nbd.mappers.RentMapper;
 import org.nbd.model.Rent;
 import org.nbd.services.RentService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.parser.Entity;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.nbd.converters.RentConverter.rentToRentDTO;
+import static org.nbd.mappers.RentMapper.toModel;
 
 @RequiredArgsConstructor
 @RestController
@@ -25,27 +32,35 @@ public class RentController {
     private final RentService service;
 
     @GetMapping("/{id}")
-    public RentDTO getRent(@PathVariable String id) {
-        return rentToRentDTO(service.getRent(new ObjectId(id)));
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE')")
+    public EntityModel<RentDTO> getRent(@PathVariable String id) {
+        Rent rent = service.getRent(new ObjectId(id));
+        return toModel(rent);
+
     }
 
     @PostMapping
-    public RentDTO create(@Valid @RequestParam String client,
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE')")
+    public EntityModel<RentDTO> create(@Valid @RequestParam String client,
                           @Valid @RequestParam String house,
                           @Valid @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startTime) {
         Rent rent = service.createRent(new ObjectId(client), new ObjectId(house), startTime);
-        return rentToRentDTO(rent);
+        return toModel(rent);
     }
 
     @GetMapping("/current/client/{clientId}")
-    public List<RentDTO> getCurrentRentsForClient(@PathVariable String clientId) {
-        return service.getCurrentRentsForClient(new ObjectId(clientId))
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE')")
+    public CollectionModel<EntityModel<RentDTO>> getCurrentRentsForClient(@PathVariable String clientId) {
+        List<EntityModel<RentDTO>> rents = service.getCurrentRentsForClient(new ObjectId(clientId))
                 .stream()
-                .map(RentConverter::rentToRentDTO)
+                .map(RentMapper::toModel)
                 .collect(Collectors.toList());
+
+        return CollectionModel.of(rents);
     }
 
     @GetMapping("/past/client/{clientId}")
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE')")
     public List<RentDTO> getPastRentsForClient(@PathVariable String clientId) {
         return service.getPastRentsForClient(new ObjectId(clientId))
                 .stream()
@@ -53,7 +68,27 @@ public class RentController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/current_for_client/client/{clientId}")
+    @PreAuthorize("#id == authentication.token.claims['id']")
+    public List<RentDTO> getCurrentLohRentsForClient(@PathVariable String clientId) {
+        return service.getCurrentRentsForClient(new ObjectId(clientId))
+                .stream()
+                .map(RentConverter::rentToRentDTO)
+                .collect(Collectors.toList());
+    }
+
+
+    @GetMapping("/past_for_client/client/{clientId}")
+    @PreAuthorize("#id == authentication.token.claims['id']")
+    public List<RentDTO> getPastLohRentsForClient(@PathVariable String clientId) {
+        return service.getPastRentsForClient(new ObjectId(clientId))
+                .stream()
+                .map(RentConverter::rentToRentDTO)
+                .collect(Collectors.toList());
+    }
+
     @GetMapping("/current/house/{houseId}")
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE')")
     public List<RentDTO> getCurrentRentsForHouse(@PathVariable String houseId) {
         return service.getCurrentRentsForHouse(new ObjectId(houseId))
                 .stream()
@@ -62,6 +97,7 @@ public class RentController {
     }
 
     @GetMapping("/past/house/{houseId}")
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE')")
     public List<RentDTO> getPastRentsForHouse(@PathVariable String houseId) {
         return service.getPastRentsForHouse(new ObjectId(houseId))
                 .stream()
@@ -70,21 +106,28 @@ public class RentController {
     }
 
     @PutMapping("/{id}/end")
-    public RentDTO endRent(@PathVariable String id, @RequestParam LocalDate endTime) {
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE')")
+    public EntityModel<RentDTO> endRent(@PathVariable String id, @RequestParam LocalDate endTime) {
         Rent rent = service.endRent(new ObjectId(id), endTime);
-        return rentToRentDTO(rent);
+        return toModel(rent);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable String id) {
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
+    public ResponseEntity<Void> delete(@PathVariable String id) {
         service.deleteActiveRent(new ObjectId(id));
+        return ResponseEntity.noContent().build(); // HTTP 204
     }
 
+
     @GetMapping
-    public List<RentDTO> getAllRents() {
-        return service.getAllRents()
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'EMPLOYEE', 'CLIENT')")
+    public CollectionModel<EntityModel<RentDTO>> getAllRents() {
+        List<EntityModel<RentDTO>> rents = service.getAllRents()
                 .stream()
-                .map(RentConverter::rentToRentDTO)
+                .map(RentMapper::toModel)
                 .collect(Collectors.toList());
+
+        return CollectionModel.of(rents);
     }
 }

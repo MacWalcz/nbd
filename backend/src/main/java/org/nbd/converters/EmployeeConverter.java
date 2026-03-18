@@ -13,7 +13,8 @@ public class EmployeeConverter {
                 employee.getLastName(),
                 employee.getPhoneNumber(),
                 employee.isActive(),
-                employee.getPosition()
+                employee.getPosition(),
+                employee.getPassword()
         );
     }
 
@@ -27,6 +28,7 @@ public class EmployeeConverter {
                 .phoneNumber(dto.phoneNumber())
                 .active(dto.active())
                 .position(dto.position())
+                .password(dto.password())
                 .build();
     }
 }

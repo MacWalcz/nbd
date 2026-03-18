@@ -3,7 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert, ScrollView, 
 import { useRouter, useFocusEffect } from 'expo-router'; // Добавили useFocusEffect
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { fetchAllRents, endRent } from '../../api/apiService';
+import {fetchAllRents, endRent, updateUser} from '../../api/apiService';
 
 export default function RentList() {
     const [rents, setRents] = useState([]);
@@ -54,15 +54,24 @@ export default function RentList() {
             }
         }
 
-        try {
-            await endRent(rentIdToTerminate, endDate);
-            Alert.alert("Sukces", "Pomyślnie zakończono najem!");
-            setRentIdToTerminate('');
-            loadData();
-        } catch (error) {
-            const msg = error.response?.data?.reason || error.response?.data?.message || error.message;
-            Alert.alert("Błąd zakończenia najmu", msg);
-        }
+
+        Alert.alert("Potwierdzenie", "Czy na pewno chcesz zakończyć wypożyczenie?", [
+            { text: "Anuluj" },
+            { text: "Tak", onPress: async () => {
+                    try {
+                        await endRent(rentIdToTerminate, endDate);
+                        Alert.alert("Sukces", "Pomyślnie zakończono najem!");
+                        setRentIdToTerminate('');
+                        loadData();
+                    } catch (error) {
+                        const msg = error.response?.data?.reason || error.response?.data?.message || error.message;
+                        Alert.alert("Błąd zakończenia najmu", msg);
+                    }
+                }
+            }
+        ]);
+
+
     };
 
     const currentRents = rents.filter(r => !r.endDate);

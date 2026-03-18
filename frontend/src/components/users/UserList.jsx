@@ -8,6 +8,9 @@ const UserList = () => {
     const [filterId, setFilterId] = useState('');
     const navigate = useNavigate();
 
+    const currentUser = JSON.parse(sessionStorage.getItem('user'));
+    const currentRole = currentUser?.role ? `ROLE_${currentUser.role}` : null;
+
     const loadUsers = async () => {
         setLoading(true);
         try {
@@ -96,26 +99,32 @@ const UserList = () => {
                                 <td data-label="Login">{user.login}</td>
                                 <td data-label="Imię Nazwisko">{user.firstName} {user.lastName}</td>
                                 <td data-label="Typ">{userType.toUpperCase()}</td>
-                                <td data-label="Aktywny" style={{ color: user.active ? 'green' : 'red' }}>
+                                <td data-label="Aktywny" style={{color: user.active ? 'green' : 'red'}}>
                                     {user.active ? 'TAK' : 'NIE'}
                                 </td>
                                 <td data-label="Akcje">
+                                    {/* Подсмотр доступен и работнику и админу */}
                                     {userType === 'clients' && (
                                         <button className="info" onClick={() => navigate(`/users/clients/${user.id}`)}>
-                                            Podgląd Klienta
+                                            Podgląd
                                         </button>
                                     )}
 
-                                    <button onClick={() => navigate(`/users/${userType}/${user.id}/edit`)}>
-                                        Modyfikuj
-                                    </button>
+                                    {/* ТОЛЬКО АДМИНИСТРАТОР может модифицировать и активировать */}
+                                    {currentRole === 'ROLE_ADMINISTRATOR' && (
+                                        <>
+                                            <button onClick={() => navigate(`/users/${userType}/${user.id}/edit`)}>
+                                                Modyfikuj
+                                            </button>
 
-                                    <button
-                                        onClick={() => handleActivation(user.id, userType, user.active)}
-                                        className={user.active ? 'danger' : 'primary'}
-                                    >
-                                        {user.active ? 'Dezaktywuj' : 'Aktywuj'}
-                                    </button>
+                                            <button
+                                                onClick={() => handleActivation(user.id, userType, user.active)}
+                                                className={user.active ? 'danger' : 'primary'}
+                                            >
+                                                {user.active ? 'Dezaktywuj' : 'Aktywuj'}
+                                            </button>
+                                        </>
+                                    )}
                                 </td>
                             </tr>
                         );

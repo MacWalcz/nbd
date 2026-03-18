@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchUserById, fetchRentsForClient } from '../../api/apiService';
+import {fetchUserById, fetchRentsForClient, fetchRentsLohForClient} from '../../api/apiService';
+import {jwtDecode} from "jwt-decode";
 
 const RentTable = ({ rents, title }) => {
     if (!rents || rents.length === 0) return <p>Brak {title} alokacji.</p>;
@@ -47,14 +48,22 @@ const ClientDetails = () => {
         const loadDetails = async () => {
             setLoading(true);
             try {
+
                 const clientData = await fetchUserById(id, 'client');
-                setClient(clientData);
 
-                const currentData = await fetchRentsForClient(id, true);
-                setCurrentRents(currentData);
+                setClient(clientData.data);
 
-                const pastData = await fetchRentsForClient(id, false);
-                setPastRents(pastData);
+
+
+
+                const currentDataRaw = await fetchRentsLohForClient(id, true);
+                const currentData = currentDataRaw._embedded ? currentDataRaw._embedded.rentDTOList : [];
+                setCurrentRents(currentDataRaw);
+
+
+                const pastDataRaw = await fetchRentsLohForClient(id, false);
+                const pastData = pastDataRaw._embedded ? pastDataRaw._embedded.rentDTOList : [];
+                setPastRents(pastDataRaw);
 
             } catch (err) {
                 setError(`Nie udało się pobrać danych: ${err.response ? err.response.data.reason : err.message}`);

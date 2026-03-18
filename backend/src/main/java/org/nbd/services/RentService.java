@@ -61,6 +61,8 @@ public class RentService {
         return rentRepo.findByClientIdAndEndDateIsNotNull(clientId);
     }
 
+
+
     public List<Rent> getCurrentRentsForHouse(ObjectId houseId) {
         return rentRepo.findByHouseIdAndEndDateIsNull(houseId);
     }

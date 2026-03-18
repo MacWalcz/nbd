@@ -36,4 +36,6 @@ public interface RentRepo extends MongoRepository<Rent, ObjectId> {
     List<Rent> findByHouseIdAndEndDateIsNotNull(ObjectId houseId);
 
     List<Rent> findAll();
+
+    List<Rent> findAllByEndDateIsNull();
 }

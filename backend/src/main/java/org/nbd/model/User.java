@@ -18,6 +18,9 @@ public abstract class User extends AbstractEntity {
     @Indexed(unique = true)
     private @NonNull String login;
 
+    @NotNull
+    private String password;
+
     private String firstName;
     private String lastName;
     private String phoneNumber;

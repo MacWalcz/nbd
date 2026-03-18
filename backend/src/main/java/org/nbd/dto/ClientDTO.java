@@ -1,5 +1,6 @@
 package org.nbd.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.validation.constraints.NotBlank;
@@ -7,8 +8,8 @@ import jakarta.validation.constraints.Size;
 import org.bson.types.ObjectId;
 
 public record ClientDTO(
-        @JsonSerialize(using = ToStringSerializer.class)
-        ObjectId id,
+    @JsonSerialize(using = ToStringSerializer.class)
+    ObjectId id,
     @NotBlank(message = "Login cannot be blank")
     @Size(min = 3, max = 30, message = "Login must be between 3 and 30 characters")
     String login,
@@ -20,5 +21,7 @@ public record ClientDTO(
     String phoneNumber,
     boolean active,
     @NotBlank(message = "Client Type cannot be blank")
-    String clientType
+    String clientType,
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    String password
 ) {}

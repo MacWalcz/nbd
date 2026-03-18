@@ -7,16 +7,24 @@ import org.nbd.exceptions.UserNotFoundException;
 import org.nbd.model.*;
 import org.nbd.repositories.UserRepo;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
+@Component
 @Service
 public class UserService {
 
     private final UserRepo userRepo;
+    private final PasswordEncoder passwordEncoder;
 
     public User getUser(ObjectId id) {
         return userRepo.findById(id)
@@ -25,6 +33,12 @@ public class UserService {
 
     public <T extends User> T createUser(T user) {
         try {
+            if (user.getPassword() != null) {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
+            if (user.getPassword() == null || user.getPassword().isBlank()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Hasło nie może być puste przy tworzeniu!");
+            }
             return (T) userRepo.save(user);
         } catch (DuplicateKeyException e) {
             throw new LoginAlreadyExists(user.getLogin());
@@ -45,6 +59,10 @@ public class UserService {
     }
 
     public <T extends User> T updateUser(ObjectId id, T updated) {
+        var auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("USER: " + auth.getName());
+        System.out.println("ROLES: " + auth.getAuthorities());
+
         User user = getUser(id);
 
         user.setLogin(updated.getLogin());
@@ -165,5 +183,12 @@ public class UserService {
 
     public Administrator updateAdministrator(ObjectId id, Administrator updated) {
         return updateUser(id, updated);
+    }
+
+    public void changePassword(ObjectId id, String newPassword) {
+        User user = userRepo.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepo.save(user);
     }
 }

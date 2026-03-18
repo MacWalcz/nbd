@@ -14,8 +14,8 @@ public class RentConverter {
             rent.getId(),
             rent.getStartDate(),
             rent.getEndDate(),
-                ClientConverter.clientToClientDTO(rent.getClient()),
-                HouseConverter.houseToHouseDTO(rent.getHouse()),
+            ClientConverter.clientToClientDTO(rent.getClient()),
+            HouseConverter.houseToHouseDTO(rent.getHouse()),
             rent.getCost()
         );
     }

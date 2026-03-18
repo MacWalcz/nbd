@@ -13,7 +13,8 @@ public class AdministratorConverter {
                 administrator.getFirstName(),
                 administrator.getLastName(),
                 administrator.getPhoneNumber(),
-                administrator.isActive()
+                (administrator.isActive()),
+                administrator.getPassword()
         );
     }
 
@@ -25,6 +26,7 @@ public class AdministratorConverter {
                 .lastName(dto.lastName())
                 .phoneNumber(dto.phoneNumber())
                 .active(dto.active())
+                .password(dto.password())
                 .build();
     }
 }

@@ -2,13 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { createUser, fetchUserById, updateUser } from '../../api/apiService';
 
-const validate = (data, isClient) => {
+const validate = (data, isClient, isEdit) => {
     const errors = {};
     if (!data.login || data.login.length < 3 || data.login.length > 30) {
         errors.login = "Login musi mieć 3-30 znaków.";
     }
     if (!data.firstName) errors.firstName = "Imię jest wymagane.";
     if (!data.lastName) errors.lastName = "Nazwisko jest wymagane.";
+
+    // Пароль обязателен только при создании
+    if (!isEdit && (!data.password || data.password.length < 4)) {
+        errors.password = "Hasło jest wymagane (min. 4 znaki).";
+    }
 
     if (data.phoneNumber && (data.phoneNumber.length < 7 || data.phoneNumber.length > 15)) {
         errors.phoneNumber = "Telefon musi mieć 7-15 cyfr.";
@@ -25,18 +30,30 @@ const UserForm = () => {
     const initialType = type || 'clients';
 
     const [formData, setFormData] = useState({
-        login: '', firstName: '', lastName: '', phoneNumber: '', active: false,
+        login: '',
+        firstName: '',
+        lastName: '',
+        phoneNumber: '',
+        active: true,
         clientType: '1',
+        password: ''
     });
+
+    const [etag, setEtag] = useState('');
     const [currentType, setCurrentType] = useState(initialType);
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(isEdit);
 
     useEffect(() => {
+
         if (isEdit) {
             setLoading(true);
             fetchUserById(id, currentType)
-                .then(data => {
+                .then(response => {
+                    const data = response.data;
+                    console.log(response.headers)
+                    setEtag(response.headers.etag || '');
+
                     setFormData({
                         login: data.login || '',
                         firstName: data.firstName || '',
@@ -45,11 +62,11 @@ const UserForm = () => {
                         active: data.active,
                         clientType: data.clientType || '1',
                         id: data.id,
-                        version: data.version
+                        password: ''
                     });
                 })
                 .catch(err => {
-                    alert("Błąd ładowania danych użytkownika.");
+                    alert("Błąd ładowania danych.");
                     navigate('/users');
                 })
                 .finally(() => setLoading(false));
@@ -66,56 +83,32 @@ const UserForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        const currentErrors = validate(formData, currentType === 'clients');
+        const currentErrors = validate(formData, currentType === 'clients', isEdit);
         setErrors(currentErrors);
 
-        if (Object.keys(currentErrors).length > 0) {
-            alert("Proszę poprawić błędy w formularzu.");
-            return;
-        }
-
-        const actionText = isEdit ? `modyfikację użytkownika ${id.substring(0, 8)}` : "utworzenie nowego użytkownika";
-        if (!window.confirm(`Czy na pewno chcesz wykonać ${actionText}?`)) {
-            return;
-        }
+        if (Object.keys(currentErrors).length > 0) return;
 
         try {
             if (isEdit) {
-                await updateUser(id, currentType, formData);
-                alert("Użytkownik pomyślnie zmodyfikowany.");
+
+                await updateUser(id, currentType, formData, etag);
+                alert("Zmiany zostały zapisane.");
             } else {
                 await createUser(currentType, formData);
-                alert("Użytkownik pomyślnie utworzony.");
+                alert("Użytkownik został utworzony.");
             }
             navigate('/users');
         } catch (error) {
-            let errorMessage = "Wystąpił nieznany błąd podczas operacji.";
-
-            if (error.response) {
-                const status = error.response.status;
-                const data = error.response.data;
-
-                if (status === 409 && data.reason === "LoginAlreadyExists") {
-                    errorMessage = `Błąd tworzenia: Login "${formData.login}" jest już zajęty.`;
-                } else if (data.reason) {
-                    errorMessage = `Błąd serwera: ${data.reason}`;
-                } else {
-                    errorMessage = `Błąd tworzenia: Login "${formData.login}" jest już zajęty.`;
-                }
-            } else {
-                errorMessage = `Błąd sieci lub systemu: ${error.message}`;
-            }
-
-            alert(errorMessage);
+            const msg = error.response?.data?.message || error.response?.data?.reason || error.message;
+            alert("Błąd: " + msg);
         }
     };
 
-    if (loading) return <div>Ładowanie danych formularza...</div>;
+    if (loading) return <div>Ładowanie...</div>;
 
     return (
         <div>
-            <h2>{isEdit ? `Edycja Użytkownika (${currentType.toUpperCase()})` : 'Tworzenie Nowego Użytkownika'}</h2>
+            <h2>{isEdit ? `Edycja (${currentType})` : 'Nowy Użytkownik'}</h2>
 
             {!isEdit && (
                 <div className="form-group">
@@ -132,41 +125,50 @@ const UserForm = () => {
                 <div className="form-group">
                     <label>Login:</label>
                     <input type="text" name="login" value={formData.login} onChange={handleChange} disabled={isEdit} />
-                    {errors.login && <span style={{ color: 'red' }}>{errors.login}</span>}
+                    {errors.login && <span style={{color: 'red'}}>{errors.login}</span>}
                 </div>
+
+                {!isEdit && (
+                    <div className="form-group">
+                        <label>Hasło:</label>
+                        <input type="password" name="password" value={formData.password} onChange={handleChange} />
+                        {errors.password && <span style={{color: 'red'}}>{errors.password}</span>}
+                    </div>
+                )}
 
                 <div className="form-group">
                     <label>Imię:</label>
                     <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} />
-                    {errors.firstName && <span style={{ color: 'red' }}>{errors.firstName}</span>}
+                    {errors.firstName && <span style={{color: 'red'}}>{errors.firstName}</span>}
                 </div>
 
                 <div className="form-group">
                     <label>Nazwisko:</label>
                     <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} />
-                    {errors.lastName && <span style={{ color: 'red' }}>{errors.lastName}</span>}
+                    {errors.lastName && <span style={{color: 'red'}}>{errors.lastName}</span>}
                 </div>
 
                 <div className="form-group">
                     <label>Telefon:</label>
                     <input type="text" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} />
-                    {errors.phoneNumber && <span style={{ color: 'red' }}>{errors.phoneNumber}</span>}
+                    {errors.phoneNumber && <span style={{color: 'red'}}>{errors.phoneNumber}</span>}
                 </div>
 
                 {currentType === 'clients' && (
                     <div className="form-group">
                         <label>Typ Klienta:</label>
                         <select name="clientType" value={formData.clientType} onChange={handleChange}>
-                            <option value="1">Default (1)</option>
-                            <option value="2">Premium (2)</option>
-                            <option value="3">Luxury (3)</option>
+                            <option value="1">Default</option>
+                            <option value="2">Premium</option>
+                            <option value="3">Luxury</option>
                         </select>
-                        {errors.clientType && <span style={{ color: 'red' }}>{errors.clientType}</span>}
                     </div>
                 )}
 
-                <button type="submit" className="primary">{isEdit ? 'Zapisz Zmiany' : 'Utwórz'}</button>
-                <button type="button" onClick={() => navigate('/users')} style={{ marginLeft: '10px' }}>Anuluj</button>
+                <div style={{ marginTop: '20px' }}>
+                    <button type="submit" className="primary">{isEdit ? 'Zapisz Zmiany' : 'Utwórz'}</button>
+                    <button type="button" onClick={() => navigate('/users')} style={{ marginLeft: '10px' }}>Anuluj</button>
+                </div>
             </form>
         </div>
     );

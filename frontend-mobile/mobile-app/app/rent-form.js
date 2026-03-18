@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, Scr
 import { useRouter } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { createRent, fetchAllClients, fetchAllHouses, fetchAllRents } from '../api/apiService';
+import {createRent, endRent, fetchAllClients, fetchAllHouses, fetchAllRents} from '../api/apiService';
 
 export default function RentForm() {
     const [loading, setLoading] = useState(true);
@@ -34,13 +34,21 @@ export default function RentForm() {
 
     const handleSubmit = async () => {
         if (!clientId || !houseId) return Alert.alert("Błąd", "Wypełnij wszystkie pola!");
-        try {
-            await createRent(clientId, houseId, startDate);
-            Alert.alert("Sukces", "Utworzono nową alokację.");
-            router.back();
-        } catch (e) {
-            Alert.alert("Błąd", e.response?.data?.reason || "Nie udało się utworzyć alokacji.");
-        }
+
+
+        Alert.alert("Potwierdzenie", "Czy na pewno chcesz stworzyć wypożyczenie?", [
+            { text: "Anuluj" },
+            { text: "Tak", onPress: async () => {
+                    try {
+                        await createRent(clientId, houseId, startDate);
+                        Alert.alert("Sukces", "Utworzono nową alokację.");
+                        router.back();
+                    } catch (e) {
+                        Alert.alert("Błąd", e.response?.data?.reason || "Nie udało się utworzyć alokacji.");
+                    }
+                }
+            }
+        ]);
     };
 
     if (loading) return <ActivityIndicator size="large" style={{marginTop: 50}} />;

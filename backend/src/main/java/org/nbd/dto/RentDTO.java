@@ -22,4 +22,8 @@ public record RentDTO(
     HouseDTO house,
 
     Double cost
-) {}
+) {
+    public String getClientLogin() {
+        return client != null ? client.login() : null;
+    }
+}

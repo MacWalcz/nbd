@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { endRent, fetchAllRents } from '../../api/apiService';
+import {endRent, fetchAllRents, fetchRentsForClient, fetchRentsLohForClient} from '../../api/apiService';
 import { getCurrentDateString } from '../../utils/helpers';
+import {jwtDecode} from "jwt-decode";
 
 const RentTable = ({ rents, title }) => {
     if (!rents.length) return <h4>Brak {title}.</h4>;
@@ -109,14 +110,34 @@ const RentEndForm = ({ currentRents, onRentEnd }) => {
 
 const RentList = () => {
     const navigate = useNavigate();
-    const [rents, setRents] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [currentRents, setCurrentRents] = useState([]);
+    const [pastRents, setPastRents] = useState([]);
 
     const loadRents = async () => {
         setLoading(true);
         try {
-            const data = await fetchAllRents();
-            setRents(data);
+            const token = sessionStorage.getItem('token');
+            const decoded = jwtDecode(token);
+            console.log(decoded.role);
+            if (decoded.role == 'ADMINISTRATOR' || decoded.role == 'EMPLOYEE'){
+                const currentDataRaw = await fetchAllRents();
+                const currentData = currentDataRaw._embedded ? currentDataRaw._embedded.rentDTOList : [];
+                setCurrentRents(currentData.filter(rent => rent.endDate === null));
+                setPastRents(currentData.filter(rent => rent.endDate !== null));
+
+            }
+            else {
+                const currentDataRaw = await fetchRentsLohForClient(decoded.id, true);
+                const currentData = currentDataRaw._embedded ? currentDataRaw._embedded.rentDTOList : [];
+                console.log("elo ",currentData)
+                setCurrentRents(currentDataRaw);
+
+                const pastDataRaw = await fetchRentsLohForClient(decoded.id, false);
+                const pastData = pastDataRaw._embedded ? pastDataRaw._embedded.rentDTOList : [];
+                setPastRents(pastDataRaw);
+            }
+
         } catch (error) {
             alert("Nie udało się pobrać pełnej listy alokacji.");
             console.error(error);
@@ -135,8 +156,8 @@ const RentList = () => {
 
     if (loading) return <div>Ładowanie pełnej listy alokacji...</div>;
 
-    const currentRents = rents.filter(r => !r.endDate);
-    const pastRents = rents.filter(r => r.endDate);
+
+
 
     return (
         <div>

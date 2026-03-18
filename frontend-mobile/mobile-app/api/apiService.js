@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { API_URL } from '../constants/Config'; // Upewnij się, że tu jest Twój IP, np. http://192.168.1.X:8080
+import { API_URL } from '../constants/Config';
 
 const apiClient = axios.create({
     baseURL: API_URL,
@@ -11,7 +11,7 @@ const apiClient = axios.create({
 const formatToISO = (date) => {
     if (!date) return null;
     const d = new Date(date);
-    return d.toISOString().split('T')[0]; // Вырезает только YYYY-MM-DD
+    return d.toISOString().split('T')[0];
 };
 
 const getTypePath = (userType) => {
@@ -57,7 +57,6 @@ export const fetchRentsForClient = (clientId, current = true) => {
 };
 
 export const createRent = (clientId, houseId, startDate) => {
-    // Spring Boot @RequestParam wymaga formatu YYYY-MM-DD w URL
     const dateStr = formatToISO(startDate);
     return apiClient.post(`/rents?client=${clientId}&house=${houseId}&startTime=${dateStr}`).then(res => res.data);
 };

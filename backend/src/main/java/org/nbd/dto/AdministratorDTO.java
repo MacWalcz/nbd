@@ -1,5 +1,6 @@
 package org.nbd.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.validation.constraints.*;
@@ -20,5 +21,7 @@ public record AdministratorDTO(
     @Size(min = 7, max = 15, message = "Login must be between 3 and 30 characters")
     String phoneNumber,
     @NotNull
-    boolean active
+    boolean active,
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    String password
 ) {}

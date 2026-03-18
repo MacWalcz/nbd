@@ -5,6 +5,7 @@ import org.bson.types.ObjectId;
 import org.nbd.exceptions.HouseActiveRentException;
 import org.nbd.exceptions.HouseNotFoundException;
 import org.nbd.model.House;
+import org.nbd.model.Rent;
 import org.nbd.repositories.HouseRepo;
 import org.nbd.repositories.RentRepo;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Component
@@ -52,6 +55,18 @@ public class HouseService {
         }
 
         houseRepo.delete(house);
+    }
+
+    public List<House> getAvailableHouses() {
+        List<Rent> activeRents = rentRepo.findAllByEndDateIsNull();
+
+        Set<ObjectId> occupiedHouseIds = activeRents.stream()
+                .map(rent -> rent.getHouse().getId())
+                .collect(Collectors.toSet());
+
+        return houseRepo.findAll().stream()
+                .filter(house -> !occupiedHouseIds.contains(house.getId()))
+                .toList();
     }
 }
 

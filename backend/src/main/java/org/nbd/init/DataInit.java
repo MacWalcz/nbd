@@ -4,10 +4,9 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.nbd.model.*;
-import org.nbd.repositories.ClientRepo;
-import org.nbd.repositories.ClientTypeRepo;
-import org.nbd.repositories.HouseRepo;
-import org.nbd.repositories.RentRepo;
+import org.nbd.repositories.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -20,9 +19,13 @@ public class DataInit {
     private final HouseRepo houseRepo;
     private final RentRepo rentRepo;
     private final ClientTypeRepo clientTypeRepo;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepo userRepo;
 
     @PostConstruct
     public void init() {
+
+        String encodedPassword = passwordEncoder.encode("client123");
 
         if (clientTypeRepo.count() == 0) {
             ClientType def = new Default();
@@ -40,10 +43,11 @@ public class DataInit {
             System.out.println("Three Client Types Created!");
         }
 
-        if (clientRepo.findById(new ObjectId("111111111111111111111111")).isEmpty()) {
+        if (userRepo.findById(new ObjectId("111111111111111111111111")).isEmpty()) {
             Client c1 = Client.builder()
                     .id(new ObjectId("111111111111111111111111"))
                     .login("klient1")
+                    .password(encodedPassword)
                     .firstName("Jan")
                     .lastName("Kowalski")
                     .phoneNumber("789789789")
@@ -51,14 +55,15 @@ public class DataInit {
                     .clientType(clientTypeRepo.findById(new ObjectId("000000000000000000000001")).orElse(null))
                     .build();
 
-            clientRepo.save(c1);
+            userRepo.save(c1);
             System.out.println("Client 1 Created!");
         }
 
-        if (clientRepo.findById(new ObjectId("222222222222222222222222")).isEmpty()) {
+        if (userRepo.findById(new ObjectId("222222222222222222222222")).isEmpty()) {
             Client c2 = Client.builder()
                     .id(new ObjectId("222222222222222222222222"))
                     .login("klient2")
+                    .password(encodedPassword)
                     .firstName("Anna")
                     .lastName("Nowak")
                     .phoneNumber("123123456")
@@ -66,14 +71,15 @@ public class DataInit {
                     .clientType(clientTypeRepo.findById(new ObjectId("000000000000000000000002")).orElse(null))
                     .build();
 
-            clientRepo.save(c2);
+            userRepo.save(c2);
             System.out.println("Client 2 Created!");
         }
 
-        if (clientRepo.findById(new ObjectId("333333333333333333333333")).isEmpty()) {
+        if (userRepo.findById(new ObjectId("333333333333333333333333")).isEmpty()) {
             Client c3 = Client.builder()
                     .id(new ObjectId("333333333333333333333333"))
                     .login("klient1_copy")
+                    .password(encodedPassword)
                     .firstName("Piotr")
                     .lastName("Nowak")
                     .phoneNumber("555555555")
@@ -81,8 +87,38 @@ public class DataInit {
                     .clientType(clientTypeRepo.findById(new ObjectId("000000000000000000000003")).orElse(null))
                     .build();
 
-            clientRepo.save(c3);
+            userRepo.save(c3);
             System.out.println("Client 3 Created!");
+        }
+
+        if (userRepo.findById(new ObjectId("333333333333333333333334")).isEmpty()) {
+            Employee c3 = Employee.builder()
+                    .id(new ObjectId("333333333333333333333334"))
+                    .login("emplY")
+                    .password(encodedPassword)
+                    .firstName("Piotr")
+                    .lastName("Nowak")
+                    .phoneNumber("555555555")
+                    .active(true)
+                    .build();
+
+            userRepo.save(c3);
+            System.out.println("Employee Created!");
+        }
+
+        if (userRepo.findById(new ObjectId("333333333333333333333335")).isEmpty()) {
+            Administrator c3 = Administrator.builder()
+                    .id(new ObjectId("333333333333333333333335"))
+                    .login("adMin12")
+                    .password(encodedPassword)
+                    .firstName("Piotr")
+                    .lastName("Nowak")
+                    .phoneNumber("555555555")
+                    .active(true)
+                    .build();
+
+            userRepo.save(c3);
+            System.out.println("Admin Created!");
         }
 
         if (houseRepo.findById(new ObjectId("444444444444444444444444")).isEmpty()) {

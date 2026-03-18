@@ -13,7 +13,15 @@ public class ClientConverter {
     }
 
     public static ClientDTO clientToClientDTO(Client client) {
-        return new ClientDTO(client.getId(), client.getLogin(), client.getFirstName(), client.getLastName(), client.getPhoneNumber(),client.isActive() ,client.getClientType().toString());
+        return new ClientDTO(client.getId(),
+                client.getLogin(),
+                client.getFirstName(),
+                client.getLastName(),
+                client.getPhoneNumber(),
+                client.isActive(),
+                client.getClientType().toString(),
+                client.getPassword()
+        );
     }
 
     public static Client clientDTOToClient(ClientDTO clientDTO)  {
@@ -25,9 +33,8 @@ public class ClientConverter {
                     .lastName(clientDTO.lastName())
                     .phoneNumber(clientDTO.phoneNumber())
                     .clientType(ClientTypeFactory.create(clientDTO.clientType()))
+                    .password(clientDTO.password())
                     .build();
-
-
     }
 
     public static List<ClientDTO> clientsToClientDTOs(List<Client> clients) {

@@ -1,5 +1,6 @@
 package org.nbd.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.validation.constraints.NotBlank;
@@ -21,5 +22,7 @@ public record EmployeeDTO(
     String phoneNumber,
     @NotNull
     boolean active,
-    String position
+    String position,
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    String password
 ) {}
