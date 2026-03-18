@@ -13,7 +13,7 @@ import org.nbd.rest.RentController;
 import org.nbd.rest.UserController;
 import org.nbd.rest.HouseController;
 
-public class RentMapper {
+public class RentHeteoas {
 
     public static EntityModel<RentDTO> toModel(Rent rent) {
         EntityModel<RentDTO> model = EntityModel.of(RentConverter.rentToRentDTO(rent));

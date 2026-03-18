@@ -34,7 +34,7 @@ export default function RootLayout() {
             />
 
             <Stack.Screen
-                name="client/[id]"
+                name="clientEnt/[id]"
                 options={{
                     title: 'Szczegóły Klienta'
                 }}

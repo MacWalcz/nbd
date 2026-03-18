@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.nbd.converters.RentConverter;
 import org.nbd.dto.RentDTO;
-import org.nbd.hetoas.RentMapper;
+import org.nbd.hetoas.RentHeteoas;
 import org.nbd.model.Rent;
 import org.nbd.services.RentService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -15,13 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.parser.Entity;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.nbd.converters.RentConverter.rentToRentDTO;
-import static org.nbd.hetoas.RentMapper.toModel;
+import static org.nbd.hetoas.RentHeteoas.toModel;
 
 @RequiredArgsConstructor
 @RestController
@@ -53,7 +51,7 @@ public class RentController {
     public CollectionModel<EntityModel<RentDTO>> getCurrentRentsForClient(@PathVariable String clientId) {
         List<EntityModel<RentDTO>> rents = service.getCurrentRentsForClient(new ObjectId(clientId))
                 .stream()
-                .map(RentMapper::toModel)
+                .map(RentHeteoas::toModel)
                 .collect(Collectors.toList());
 
         return CollectionModel.of(rents);
@@ -125,7 +123,7 @@ public class RentController {
     public CollectionModel<EntityModel<RentDTO>> getAllRents() {
         List<EntityModel<RentDTO>> rents = service.getAllRents()
                 .stream()
-                .map(RentMapper::toModel)
+                .map(RentHeteoas::toModel)
                 .collect(Collectors.toList());
 
         return CollectionModel.of(rents);
