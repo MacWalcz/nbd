@@ -1,7 +1,7 @@
 package org.nbd.ports.input.users;
 
-import org.nbd.dto.JwtResponse;
+import org.nbd.dto.TokenResponse;
 
 public interface RefreshUseCase {
-    JwtResponse refresh(String refreshToken);
+    TokenResponse refresh(String refreshToken);
 }

@@ -6,12 +6,18 @@ import org.nbd.exceptions.HouseActiveRentException;
 import org.nbd.exceptions.HouseNotFoundException;
 import org.nbd.model.House;
 import org.nbd.model.Rent;
-import org.nbd.repositories.HouseRepo;
-import org.nbd.repositories.RentRepo;
+import org.nbd.ports.input.houses.CreateHouseUseCase;
+import org.nbd.ports.input.houses.DeleteHouseUseCase;
+import org.nbd.ports.input.houses.HouseQueryUseCase;
+import org.nbd.ports.input.houses.UpdateHouseUseCase;
+import org.nbd.ports.output.houses.HouseCommandPort;
+import org.nbd.ports.output.houses.HouseQueryPort;
+import org.nbd.ports.output.rents.RentQueryPort;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,52 +25,56 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Component
 @Service
-public class HouseService {
+public class HouseService implements CreateHouseUseCase, DeleteHouseUseCase, UpdateHouseUseCase, HouseQueryUseCase {
 
-    private final HouseRepo houseRepo;
-    private final RentRepo rentRepo;
+    private final HouseQueryPort houseQueryPort;
+    private final HouseCommandPort houseCommandPort;
+    private final RentQueryPort rentQueryPort;
 
     public House getHouse(ObjectId id) {
-        return houseRepo.findById(id).orElseThrow(() -> new HouseNotFoundException(id));
+        return houseQueryPort.findById(id).orElseThrow(() -> new HouseNotFoundException(id));
     }
 
     public House createHouse(House house) {
-        return houseRepo.save(house);
+        return houseCommandPort.save(house);
     }
 
     public List<House> getAllHouses() {
-        return houseRepo.findAll();
+        return houseQueryPort.findAll();
     }
 
     public House updateHouse(ObjectId id, House updatedHouse) {
-        House house = houseRepo.findById(id)
+        House house = houseQueryPort.findById(id)
                 .orElseThrow(() -> new HouseNotFoundException(id));
         house.setHouseNumber(updatedHouse.getHouseNumber());
         house.setPrice(updatedHouse.getPrice());
         house.setArea(updatedHouse.getArea());
-        return houseRepo.save(house);
+        return houseCommandPort.save(house);
     }
 
     @Transactional
     public void deleteHouse(ObjectId id) {
-        House house = houseRepo.findById(id)
+        House house = houseQueryPort.findById(id)
                 .orElseThrow(() -> new HouseNotFoundException(id));
 
-        if (rentRepo.existsByHouseIdAndEndDateIsNull(id)) {
+
+
+        if (rentQueryPort.existsActiveOrFutureRent(id, LocalDate.now())) {
             throw new HouseActiveRentException(id);
         }
 
-        houseRepo.delete(house);
+        houseCommandPort.delete(house);
     }
 
+    // do poprawy logika (wstępnie poprawiona)
     public List<House> getAvailableHouses() {
-        List<Rent> activeRents = rentRepo.findAllByEndDateIsNull();
+        List<Rent> activeRents = rentQueryPort.findAllActiveOrFutureRent(LocalDate.now());
 
         Set<ObjectId> occupiedHouseIds = activeRents.stream()
                 .map(rent -> rent.getHouse().getId())
                 .collect(Collectors.toSet());
 
-        return houseRepo.findAll().stream()
+        return houseQueryPort.findAll().stream()
                 .filter(house -> !occupiedHouseIds.contains(house.getId()))
                 .toList();
     }

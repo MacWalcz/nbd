@@ -5,61 +5,62 @@ import org.bson.types.ObjectId;
 import org.nbd.exceptions.LoginAlreadyExists;
 import org.nbd.exceptions.UserNotFoundException;
 import org.nbd.model.*;
-import org.nbd.repositories.UserRepo;
+import org.nbd.ports.input.users.*;
+import org.nbd.ports.output.users.UserCommandPort;
+import org.nbd.ports.output.users.UserQueryPort;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-@Component
 @Service
-public class UserService {
+public class UserService implements UserQueryUseCase, ActivateUseCase, UpdateUserUseCase, CreateUserUseCase, ChangePasswordUseCase {
 
-    private final UserRepo userRepo;
+    private final UserCommandPort userCommandPort;
+    private final UserQueryPort userQueryPort;
     private final PasswordEncoder passwordEncoder;
 
+    @Override
     public User getUser(ObjectId id) {
-        return userRepo.findById(id)
+        return userQueryPort.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
 
+    @Override
     public <T extends User> T createUser(T user) {
         try {
-            if (user.getPassword() != null) {
-                user.setPassword(passwordEncoder.encode(user.getPassword()));
-            }
-            if (user.getPassword() == null || user.getPassword().isBlank()) {
+            if (user.getPassword().isBlank()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Hasło nie może być puste przy tworzeniu!");
             }
-            return (T) userRepo.save(user);
+            return (T) userCommandPort.save(user);
         } catch (DuplicateKeyException e) {
             throw new LoginAlreadyExists(user.getLogin());
         }
     }
 
+    @Override
     public User getByLogin(String login) {
-        return userRepo.findByLogin(login)
+        return userQueryPort.findByLogin(login)
                 .orElseThrow(() -> new UserNotFoundException(login));
     }
 
+    @Override
     public List<User> searchByLogin(String partial) {
-        return userRepo.findAllByLoginContainingIgnoreCase(partial);
+        return userQueryPort.findAllByLoginContainingIgnoreCase(partial);
     }
 
+    @Override
     public List<User> getAllUsers() {
-        return userRepo.findAll();
+        return userQueryPort.findAll();
     }
 
+    //xd co to jest
+    @Override
     public <T extends User> T updateUser(ObjectId id, T updated) {
-        var auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("USER: " + auth.getName());
-        System.out.println("ROLES: " + auth.getAuthorities());
 
         User user = getUser(id);
 
@@ -77,116 +78,28 @@ public class UserService {
 
         }
 
-        return (T) userRepo.save(user);
+        return (T) userCommandPort.save(user);
     }
 
-
+    @Override
     public User activate(ObjectId id) {
-        User user = userRepo.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        User user = userQueryPort.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         user.setActive(true);
-        return userRepo.save(user);
+        return userCommandPort.save(user);
     }
 
+    @Override
     public User deactivate(ObjectId id) {
-        User user = userRepo.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        User user = userQueryPort.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         user.setActive(false);
-        return userRepo.save(user);
+        return userCommandPort.save(user);
     }
 
-    public Client getClient(ObjectId id) {
-        User user = getUser(id);
-        if (user instanceof Client c) return c;
-        throw new UserNotFoundException(id);
-    }
-
-    public Client getClientByLogin(String login) {
-        User user = getByLogin(login);
-        if (user instanceof Client c) return c;
-        throw new UserNotFoundException(login);
-    }
-
-    public List<Client> searchClients(String partial) {
-        return searchByLogin(partial).stream()
-                .filter(u -> u instanceof Client)
-                .map(u -> (Client) u)
-                .collect(Collectors.toList());
-    }
-
-    public List<Client> getAllClients() {
-        return getAllUsers().stream()
-                .filter(u -> u instanceof Client)
-                .map(u -> (Client) u)
-                .collect(Collectors.toList());
-    }
-
-    public Client updateClient(ObjectId id, Client updated) {
-        return updateUser(id, updated);
-    }
-
-    public Employee getEmployee(ObjectId id) {
-        User user = getUser(id);
-        if (user instanceof Employee e) return e;
-        throw new UserNotFoundException(id);
-    }
-
-    public Employee getEmployeeByLogin(String login) {
-        User user = getByLogin(login);
-        if (user instanceof Employee e) return e;
-        throw new UserNotFoundException(login);
-    }
-
-    public List<Employee> searchEmployees(String partial) {
-        return searchByLogin(partial).stream()
-                .filter(u -> u instanceof Employee)
-                .map(u -> (Employee) u)
-                .collect(Collectors.toList());
-    }
-
-    public List<Employee> getAllEmployees() {
-        return getAllUsers().stream()
-                .filter(u -> u instanceof Employee)
-                .map(u -> (Employee) u)
-                .collect(Collectors.toList());
-    }
-
-    public Employee updateEmployee(ObjectId id, Employee updated) {
-        return updateUser(id, updated);
-    }
-
-    public Administrator getAdministrator(ObjectId id) {
-        User user = getUser(id);
-        if (user instanceof Administrator a) return a;
-        throw new UserNotFoundException(id);
-    }
-
-    public Administrator getAdministratorByLogin(String login) {
-        User user = getByLogin(login);
-        if (user instanceof Administrator a) return a;
-        throw new UserNotFoundException(login);
-    }
-
-    public List<Administrator> searchAdministrators(String partial) {
-        return searchByLogin(partial).stream()
-                .filter(u -> u instanceof Administrator)
-                .map(u -> (Administrator) u)
-                .collect(Collectors.toList());
-    }
-
-    public List<Administrator> getAllAdministrators() {
-        return getAllUsers().stream()
-                .filter(u -> u instanceof Administrator)
-                .map(u -> (Administrator) u)
-                .collect(Collectors.toList());
-    }
-
-    public Administrator updateAdministrator(ObjectId id, Administrator updated) {
-        return updateUser(id, updated);
-    }
-
+    @Override
     public void changePassword(ObjectId id, String newPassword) {
-        User user = userRepo.findById(id)
+        User user = userQueryPort.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
         user.setPassword(passwordEncoder.encode(newPassword));
-        userRepo.save(user);
+        userCommandPort.save(user);
     }
 }

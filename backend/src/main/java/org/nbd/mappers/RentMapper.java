@@ -1,4 +1,4 @@
-package org.nbd.hetoas;
+package org.nbd.hateoas;
 
 import org.nbd.converters.RentConverter;
 import org.nbd.dto.RentDTO;

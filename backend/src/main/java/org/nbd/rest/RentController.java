@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.nbd.converters.RentConverter;
 import org.nbd.dto.RentDTO;
-import org.nbd.hetoas.RentMapper;
+import org.nbd.hateoas.RentMapper;
 import org.nbd.model.Rent;
 import org.nbd.services.RentService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.nbd.converters.RentConverter.rentToRentDTO;
-import static org.nbd.hetoas.RentMapper.toModel;
+import static org.nbd.hateoas.RentMapper.toModel;
 
 @RequiredArgsConstructor
 @RestController

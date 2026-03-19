@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtAdapter implements TokenPort {
 
-    private AuthUserMapper authUserMapper;
+    private final AuthUserMapper authUserMapper;
 
     @Value("${jwt.secret}")
     private String secret;

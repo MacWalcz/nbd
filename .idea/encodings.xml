@@ -9,6 +9,8 @@
     <file url="file://$PROJECT_DIR$/Adapters/RepositoriesAdapter/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Adapters/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Adapters/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ApplicationCore/ApplicationEndPoints/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ApplicationCore/ApplicationEndPoints/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ApplicationCore/ApplicationPorts/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ApplicationCore/ApplicationPorts/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ApplicationCore/ApplicationServices/src/main/java" charset="UTF-8" />
