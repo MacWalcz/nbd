@@ -15,7 +15,6 @@
         <module>ApplicationPorts</module>
         <module>ApplicationServices</module>
         <module>DomainModel</module>
-        <module>ApplicationEndPoints</module>
     </modules>
 
 

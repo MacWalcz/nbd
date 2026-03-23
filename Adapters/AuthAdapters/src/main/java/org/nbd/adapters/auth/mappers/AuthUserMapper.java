@@ -1,11 +1,19 @@
 package org.nbd.adapters.auth.mappers;
 
 
-import org.mapstruct.Mapper;
+
 import org.nbd.adapters.auth.model.AuthUser;
 import org.nbd.model.User;
 
-@Mapper(componentModel = "spring")
-public interface AuthUserMapper {
-    AuthUser toAuthUser(User user);
+
+public class AuthUserMapper {
+    public static AuthUser toAuthUser(User user){
+        return AuthUser.builder()
+                .id(user.getId())
+                .login(user.getLogin())
+                .role(user.getClass().toString().toUpperCase())
+                .build();
+
+    }
+
 }

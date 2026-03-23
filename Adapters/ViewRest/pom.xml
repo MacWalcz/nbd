@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.nbd</groupId>
-        <artifactId>ApplicationCore</artifactId>
+        <artifactId>Adapters</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ApplicationEndPoints</artifactId>
+    <artifactId>ViewRest</artifactId>
 
     <dependencies>
         <dependency>

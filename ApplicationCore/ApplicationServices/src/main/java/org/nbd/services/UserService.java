@@ -18,7 +18,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class UserService implements UserQueryUseCase, ActivateUseCase, UpdateUserUseCase, CreateUserUseCase, ChangePasswordUseCase {
+public class UserService implements UserQueryUseCase, UserCommandUseCase {
 
     private final UserCommandPort userCommandPort;
     private final UserQueryPort userQueryPort;

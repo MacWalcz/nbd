@@ -15,6 +15,7 @@
         <module>EventsAdapter</module>
         <module>RepositoriesAdapter</module>
         <module>AuthAdapters</module>
+        <module>ViewRest</module>
     </modules>
 
 </project>

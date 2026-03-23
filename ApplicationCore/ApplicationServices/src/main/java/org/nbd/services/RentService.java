@@ -6,10 +6,7 @@ import org.nbd.exceptions.*;
 import org.nbd.model.Client;
 import org.nbd.model.House;
 import org.nbd.model.Rent;
-import org.nbd.ports.input.rents.CreateRentUseCase;
-import org.nbd.ports.input.rents.DeleteRentUseCase;
-import org.nbd.ports.input.rents.EndRentUseCase;
-import org.nbd.ports.input.rents.RentQueryUseCase;
+import org.nbd.ports.input.rents.*;
 import org.nbd.ports.output.clients.ClientQueryPort;
 import org.nbd.ports.output.houses.HouseQueryPort;
 import org.nbd.ports.output.rents.RentCommandPort;
@@ -22,7 +19,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @Service
-public class RentService implements CreateRentUseCase, DeleteRentUseCase, EndRentUseCase, RentQueryUseCase {
+public class RentService implements RentCommandUseCase, RentQueryUseCase {
 
     private final RentCommandPort rentCommandPort;
     private final RentQueryPort rentQueryPort;

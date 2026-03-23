@@ -6,10 +6,7 @@ import org.nbd.exceptions.HouseActiveRentException;
 import org.nbd.exceptions.HouseNotFoundException;
 import org.nbd.model.House;
 import org.nbd.model.Rent;
-import org.nbd.ports.input.houses.CreateHouseUseCase;
-import org.nbd.ports.input.houses.DeleteHouseUseCase;
-import org.nbd.ports.input.houses.HouseQueryUseCase;
-import org.nbd.ports.input.houses.UpdateHouseUseCase;
+import org.nbd.ports.input.houses.*;
 import org.nbd.ports.output.houses.HouseCommandPort;
 import org.nbd.ports.output.houses.HouseQueryPort;
 import org.nbd.ports.output.rents.RentQueryPort;
@@ -25,7 +22,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Component
 @Service
-public class HouseService implements CreateHouseUseCase, DeleteHouseUseCase, UpdateHouseUseCase, HouseQueryUseCase {
+public class HouseService implements HouseCommandUseCase, HouseQueryUseCase {
 
     private final HouseQueryPort houseQueryPort;
     private final HouseCommandPort houseCommandPort;

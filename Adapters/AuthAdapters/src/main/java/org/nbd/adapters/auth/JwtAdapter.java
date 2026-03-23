@@ -19,7 +19,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtAdapter implements TokenPort {
 
-    private final AuthUserMapper authUserMapper;
 
     @Value("${jwt.secret}")
     private String secret;
@@ -29,11 +28,11 @@ public class JwtAdapter implements TokenPort {
 
     @Override
     public String generateToken(User user) {
-        AuthUser authUser = authUserMapper.toAuthUser(user);
+        AuthUser authUser = AuthUserMapper.toAuthUser(user);
         return Jwts.builder()
-                .setSubject(authUser.getLogin())
-                .claim("id", authUser.getId().toString())
-                .claim("role", getRoleFromUser(user))
+                .setSubject(authUser.login())
+                .claim("id", authUser.id().toString())
+                .claim("role", authUser.role())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(SignatureAlgorithm.HS256, secret)
@@ -64,19 +63,15 @@ public class JwtAdapter implements TokenPort {
 
     @Override
     public String generateRefreshToken(User user) {
+        AuthUser authUser = AuthUserMapper.toAuthUser(user);
         return Jwts.builder()
-                .setSubject(user.getLogin())
+                .setSubject(authUser.login())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration * 5))
                 .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
 
-    public String getRoleFromUser(User user) {
-        if (user instanceof Administrator) return "ADMINISTRATOR";
-        if (user instanceof Employee) return "EMPLOYEE";
-        return "CLIENT";
-    }
 
     public boolean validateToken(String token) {
         try {
